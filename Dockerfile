@@ -33,13 +33,11 @@ RUN wget https://raw.githubusercontent.com/AbdealiJK/file-metadata/95cc2abb35066
 
 # Run tests here ... may be do unittests or run a bot script
 RUN echo \
-"
-RUN simple_bot.py BY ENTERING:
-  cd /opt/pywikibot-core/; python pwb.py basic; cd /
-  cd /opt/pywikibot-core; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd /
-RUN bulk.py BY ENTERING:
-  cd /opt/pywikibot-core/; python pwb.py basic; cd /
-  python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/
-"
+"RUN simple_bot.py BY ENTERING: \n" \
+"  cd /opt/pywikibot-core/; python pwb.py basic; cd / \n" \
+"  cd /opt/pywikibot-core; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd / \n" \
+"RUN bulk.py BY ENTERING: \n" \
+"  cd /opt/pywikibot-core/; python pwb.py basic; cd / \n" \
+"  python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/ \n"
 
 ##################### INSTALLATION END #####################
