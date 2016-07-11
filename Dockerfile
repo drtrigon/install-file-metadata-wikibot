@@ -4,7 +4,7 @@
 ############################################################
 
 # Set the base image to Ubuntu
-FROM drtrigon/file_metadata
+FROM drtrigon/file-metadata
 
 # File Author / Maintainer
 MAINTAINER DrTrigon <dr.trigon@surfeu.ch>
