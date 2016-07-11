@@ -1,9 +1,9 @@
 ############################################################
 # Dockerfile to build gsoc-catimages container image
-# Based on Ubuntu resp. file_metadata_0.1.0.dev99999999999999
+# Based on ubuntu:14.04 resp. file-metadata
 ############################################################
 
-# Set the base image to Ubuntu
+# Set the base image
 FROM drtrigon/file-metadata
 
 # File Author / Maintainer
@@ -31,8 +31,10 @@ RUN apt-get install python-opencv
 RUN pip install retry httplib2 --upgrade
 RUN wget https://raw.githubusercontent.com/AbdealiJK/file-metadata/95cc2abb3506608266b1faf0da0722433ad6b03b/tests/bulk.py
 
-# Run tests here ... may be do unittests or run a bot script
-RUN echo \
+##################### INSTALLATION END #####################
+
+# Show some info about the docker image
+RUN echo "\n" \
 "RUN simple_bot.py BY ENTERING: \n" \
 "  cd /opt/pywikibot-core/; python pwb.py basic; cd / \n" \
 "  cd /opt/pywikibot-core; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd / \n" \
@@ -40,4 +42,4 @@ RUN echo \
 "  cd /opt/pywikibot-core/; python pwb.py basic; cd / \n" \
 "  python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/ \n"
 
-##################### INSTALLATION END #####################
+# (run tests here ... may be do unittests or run a bot script)
