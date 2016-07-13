@@ -4,7 +4,7 @@
 ############################################################
 
 # Set the base image
-FROM pywikibotcatfiles/file-metadata
+FROM pywikibotcatfiles/docker-file-metadata
 
 # File Author / Maintainer
 MAINTAINER DrTrigon <dr.trigon@surfeu.ch>
