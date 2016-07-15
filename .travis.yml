@@ -1,6 +1,8 @@
 language: bash
 
-sudo: true  # no virtualenv for these tests
+#sudo: true  # no virtualenv for these tests
+sudo: required
+dist: trusty
 
 os:
   - linux
