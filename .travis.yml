@@ -9,19 +9,22 @@ os:
 
 env:
   - TEST_CMD="invoke --list"
-  - TEST_CMD="invoke install_file_metadata_spm --yes install_pywikibot --yes install_file_metadata_bot --yes"
-  - TEST_CMD="invoke install_file_metadata_pip --yes install_pywikibot --yes install_file_metadata_bot --yes"
+  - TEST_CMD="invoke install_file_metadata_spm --yes install_pywikibot --yes install_file_metadata_bot --yes"  # trusty only
+  - TEST_CMD="invoke install_file_metadata_pip --yes install_pywikibot --yes install_file_metadata_bot --yes"  # trusty only
 #  - TEST_CMD="invoke install_pywikibot --yes install_file_metadata_git --yes install_file_metadata_bot --yes"
   - TEST_CMD="invoke install_pywikibot --yes install_file_metadata_git --yes"
 #  - TEST_CMD="invoke install_docker --yes"
 
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y openjdk-7-jre
+
 install:
 #  - pip install -U pip
-  - sudo pip install invoke
+  - sudo pip install invoke --upgrade
 
 #before_script:
 #  - curl -L "http://downloads.sourceforge.net/shunit2/shunit2-2.0.3.tgz" | tar zx
 
 script: 
-#  - cd $TEST_DIR && npm install && npm test
   - $TEST_CMD
