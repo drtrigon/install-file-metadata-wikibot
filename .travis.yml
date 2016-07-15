@@ -1,11 +1,12 @@
 language: bash
 
-sudo: true  # may be use a virtualenv or 'language: python' instead
+sudo: true  # no virtualenv for these tests
 
 os:
   - linux
 
 env:
+  - TEST_CMD=invoke --list
   - TEST_CMD=invoke install_file_metadata_spm install_pywikibot install_file_metadata_bot
   - TEST_CMD=invoke install_file_metadata_pip install_pywikibot install_file_metadata_bot
 #  - TEST_CMD=invoke install_pywikibot install_file_metadata_git install_file_metadata_bot; \
