@@ -12,6 +12,10 @@ env:
   - TEST_CMD=invoke install_pywikibot --yes install_file_metadata_git --yes; \
 #  - TEST_CMD=invoke install_docker --yes
 
+install:
+#  - pip install -U pip
+  - pip install invoke
+
 #before_script:
 #  - curl -L "http://downloads.sourceforge.net/shunit2/shunit2-2.0.3.tgz" | tar zx
 
