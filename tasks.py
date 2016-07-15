@@ -175,12 +175,13 @@ def test_script_bulk(ctx, yes=False, git=False):
 
 # Test of docker image contained scripts
 @task
-def test_docker(ctx, yes=False):
+def test_docker(ctx, yes=False, travis=False):
     p   = params(yes=yes)
+    p['travis'] = '-i' if kwargs['travis'] else '-it'
     job = [
-    "sudo docker run -it drtrigon/catimages-gsoc \"cd /opt/pywikibot-core/; python pwb.py basic; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd /\"",
-#    "sudo docker run -it drtrigon/catimages-gsoc \"cd /opt/pywikibot-core; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd /\"",
-    "sudo docker run -it drtrigon/catimages-gsoc \"cd /opt/pywikibot-core/; python pwb.py basic; cd /; python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"",
-#    "sudo docker run -it drtrigon/catimages-gsoc \"python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"",
+    "sudo docker run %(travis)s drtrigon/catimages-gsoc \"cd /opt/pywikibot-core/; python pwb.py basic; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd /\"" % p,
+#    "sudo docker run %(travis)s drtrigon/catimages-gsoc \"cd /opt/pywikibot-core; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd /\"" % p,
+    "sudo docker run %(travis)s drtrigon/catimages-gsoc \"cd /opt/pywikibot-core/; python pwb.py basic; cd /; python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"" % p,
+#    "sudo docker run %(travis)s drtrigon/catimages-gsoc \"python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"" % p,
     ]
     run(ctx, job, yes=yes)
