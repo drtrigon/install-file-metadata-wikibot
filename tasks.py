@@ -98,7 +98,6 @@ def install_pywikibot(ctx, yes=False):
     "sudo apt-get %(yes)s update" % p,
     "sudo apt-get %(yes)s install git git-review" % p,
     "git clone --branch 2.0 --recursive https://gerrit.wikimedia.org/r/pywikibot/core.git",
-#    "cd core/; python pwb.py basic",    # issue: ctx.run stops after this line
     ]
     install(ctx, job, yes=yes)
 
@@ -124,5 +123,23 @@ def install_docker(ctx, yes=False):
     "sudo apt-get %(yes)s update" % p,
     "sudo apt-get %(yes)s install docker-engine" % p,
     #"sudo service docker start" % p,
+    ]
+    install(ctx, job, yes=yes)
+
+# Configuration of pywikibot
+@task
+def configure_pywikibot(ctx, yes=False):
+    p   = params(yes=yes)
+    job = [
+    "cd core/; python pwb.py basic",    # issue: ctx.run stops after this line
+    ]
+    install(ctx, job, yes=yes)
+
+# Configuration of docker for running tests
+@task
+def configure_docker(ctx, yes=False):
+    p   = params(yes=yes)
+    job = [
+    "sudo docker pull drtrigon/catimages-gsoc"
     ]
     install(ctx, job, yes=yes)
