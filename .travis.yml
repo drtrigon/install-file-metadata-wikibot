@@ -1,6 +1,6 @@
 language: bash
 
-sudo: false
+sudo: true  # may be use a virtualenv or 'language: python' instead
 
 os:
   - linux
