@@ -13,7 +13,8 @@ env:
   - TEST_CMD="invoke install_file_metadata_pip --yes install_pywikibot --yes install_file_metadata_bot --yes"  # trusty only, needs openjdk-7-jre
   #- TEST_CMD="invoke install_pywikibot --yes install_file_metadata_git --yes install_file_metadata_bot --yes"
   - TEST_CMD="invoke install_pywikibot --yes install_file_metadata_git --yes"
-  - TEST_CMD="invoke install_docker --yes && sudo docker pull drtrigon/catimages-gsoc"
+#  - TEST_CMD="invoke install_docker --yes && sudo docker pull drtrigon/catimages-gsoc"
+  - TEST_CMD="invoke install_docker --yes; sudo docker pull drtrigon/catimages-gsoc"
 
 before_install:
   - sudo apt-get -qq update
