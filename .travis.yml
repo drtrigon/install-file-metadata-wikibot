@@ -7,9 +7,9 @@ os:
 
 env:
   - TEST_CMD="invoke --list"
-  - TEST_CMD="invoke install_file_metadata_spm install_pywikibot install_file_metadata_bot"
-  - TEST_CMD="invoke install_file_metadata_pip install_pywikibot install_file_metadata_bot"
-#  - TEST_CMD="invoke install_pywikibot install_file_metadata_git install_file_metadata_bot"
+  - TEST_CMD="invoke install_file_metadata_spm --yes install_pywikibot --yes install_file_metadata_bot --yes"
+  - TEST_CMD="invoke install_file_metadata_pip --yes install_pywikibot --yes install_file_metadata_bot --yes"
+#  - TEST_CMD="invoke install_pywikibot --yes install_file_metadata_git --yes install_file_metadata_bot --yes"
   - TEST_CMD="invoke install_pywikibot --yes install_file_metadata_git --yes"
 #  - TEST_CMD="invoke install_docker --yes"
 
