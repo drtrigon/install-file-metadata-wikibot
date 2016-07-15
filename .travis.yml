@@ -9,13 +9,11 @@ os:
 
 env:
   - TEST_CMD="invoke --list"
-  - TEST_CMD="invoke install_file_metadata_spm --yes install_pywikibot --yes install_file_metadata_bot --yes"  # trusty only
-  - TEST_CMD="invoke install_file_metadata_pip --yes install_pywikibot --yes install_file_metadata_bot --yes"  # trusty only, needs openjdk-7-jre
+  - TEST_CMD="invoke install_file_metadata_spm --yes install_pywikibot --yes install_file_metadata_bot --yes test_script --yes"  # trusty only
+  - TEST_CMD="invoke install_file_metadata_pip --yes install_pywikibot --yes install_file_metadata_bot --yes test_script --yes"  # trusty only, needs openjdk-7-jre
   #- TEST_CMD="invoke install_pywikibot --yes install_file_metadata_git --yes install_file_metadata_bot --yes"
-  - TEST_CMD="invoke install_pywikibot --yes install_file_metadata_git --yes"
-#  - TEST_CMD="invoke configure_docker --yes"
+  - TEST_CMD="invoke install_pywikibot --yes install_file_metadata_git --yes test_script --yes --git"
   - TEST_CMD="invoke configure_docker --yes test_docker --yes --travis"
-# !!! add tests for spm, pip and git
 
 before_install:
   - sudo apt-get -qq update
@@ -23,9 +21,6 @@ before_install:
 
 install:
   - sudo pip install invoke
-
-#before_script:
-#  - curl -L "http://downloads.sourceforge.net/shunit2/shunit2-2.0.3.tgz" | tar zx
 
 script: 
   - $TEST_CMD

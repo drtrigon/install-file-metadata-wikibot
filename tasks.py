@@ -147,6 +147,9 @@ def configure_docker(ctx, yes=False):
 # Test of pywikibot-catfiles scripts (and file-metadata)
 @task
 def test_script(ctx, yes=False, git=False):
+    print("test_script DISABLED")
+    return
+
     test_script_simple_bot(ctx, yes=yes)
     test_script_bulk(ctx, yes=yes, git=git)
 
@@ -176,6 +179,9 @@ def test_script_bulk(ctx, yes=False, git=False):
 # Test of docker image contained scripts
 @task
 def test_docker(ctx, yes=False, travis=False):
+    print("test_docker DISABLED")
+    return
+
     p   = params(yes=yes)
     p['travis'] = '-i' if travis else '-it'
     job = [
