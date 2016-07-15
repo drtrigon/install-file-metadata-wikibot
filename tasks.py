@@ -177,7 +177,7 @@ def test_script_bulk(ctx, yes=False, git=False):
 @task
 def test_docker(ctx, yes=False, travis=False):
     p   = params(yes=yes)
-    p['travis'] = '-i' if p['travis'] else '-it'
+    p['travis'] = '-i' if travis else '-it'
     job = [
     "sudo docker run %(travis)s drtrigon/catimages-gsoc \"cd /opt/pywikibot-core/; python pwb.py basic; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd /\"" % p,
 #    "sudo docker run %(travis)s drtrigon/catimages-gsoc \"cd /opt/pywikibot-core; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd /\"" % p,
