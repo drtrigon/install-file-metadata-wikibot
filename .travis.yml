@@ -1,12 +1,11 @@
 language: bash
 
-#sudo: true  # no virtualenv for these tests
+#sudo: true   # no virtualenv for these tests
 sudo: required
+dist: trusty  # 14.04 (16.04 available too?)
 
-#os:
-#  - linux
-dist:
-  - trusty
+os:
+  - linux
 
 env:
   - TEST_CMD="invoke --list"
