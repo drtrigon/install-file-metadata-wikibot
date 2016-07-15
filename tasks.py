@@ -17,7 +17,7 @@
 from invoke import task
 
 # Install procedure
-def install(ctx, job, yes=False):
+def run(ctx, job, yes=False):
     for cmd in job:
         print "\n", ("--- " * 10), "\n", cmd, "\n", ("--- " * 10)
         if not yes:
@@ -43,14 +43,14 @@ def install_pip(ctx, yes=False):
     "wget https://bootstrap.pypa.io/get-pip.py; sudo python get-pip.py",
     "pip show pip",
     ]
-    install(ctx, job, yes=yes)
+    run(ctx, job, yes=yes)
 
 def install_file_metadata_deps_spm(ctx, yes=False):
     p   = params(yes=yes)
     job = [
     "sudo apt-get %(yes)s install python-appdirs python-magic python-numpy python-scipy python-matplotlib python-wand python-skimage python-zbar cmake libboost-python-dev liblzma-dev libjpeg-dev libz-dev" % p,
     ]
-    install(ctx, job, yes=yes)
+    run(ctx, job, yes=yes)
 
 def install_file_metadata(ctx, yes=False):
     p   = params(yes=yes)
@@ -58,7 +58,7 @@ def install_file_metadata(ctx, yes=False):
     "sudo pip install file-metadata --upgrade",
     "python -c'import file_metadata; print file_metadata.__version__'",
     ]
-    install(ctx, job, yes=yes)
+    run(ctx, job, yes=yes)
 
 # Test through pip
 @task
@@ -72,7 +72,7 @@ def install_file_metadata_deps_pip(ctx, yes=False):
     job = [
     "sudo apt-get %(yes)s install perl openjdk-7-jre python-dev pkg-config libfreetype6-dev libpng12-dev liblapack-dev libblas-dev gfortran cmake libboost-python-dev liblzma-dev libjpeg-dev python-virtualenv" % p,
     ]
-    install(ctx, job, yes=yes)
+    run(ctx, job, yes=yes)
 
 # Test through github
 @task
@@ -88,7 +88,7 @@ def install_file_metadata_git(ctx, yes=False):
     "cd file-metadata/; python -c'import file_metadata; print file_metadata.__version__'",
     "cd core/; ln -s ../file-metadata/file_metadata file_metadata",
     ]
-    install(ctx, job, yes=yes)
+    run(ctx, job, yes=yes)
 
 # Installation of pywikibot
 @task
@@ -99,7 +99,7 @@ def install_pywikibot(ctx, yes=False):
     "sudo apt-get %(yes)s install git git-review" % p,
     "git clone --branch 2.0 --recursive https://gerrit.wikimedia.org/r/pywikibot/core.git",
     ]
-    install(ctx, job, yes=yes)
+    run(ctx, job, yes=yes)
 
 # Test bot script
 @task
@@ -109,7 +109,7 @@ def install_file_metadata_bot(ctx, yes=False):
     "sudo apt-get %(yes)s install libmagickwand-dev" % p,
     #"cd core/; wget https://gist.githubusercontent.com/AbdealiJK/a94fc0d0445c2ad715d9b1b95ec2ba03/raw/1dcd1fb8c168608c28e20ff50e9284700f61b90d/file_metadata_bot.py",
     ]
-    install(ctx, job, yes=yes)
+    run(ctx, job, yes=yes)
 
 # Install Docker container
 @task
@@ -124,7 +124,7 @@ def install_docker(ctx, yes=False):
     "sudo apt-get %(yes)s install docker-engine" % p,
     #"sudo service docker start" % p,
     ]
-    install(ctx, job, yes=yes)
+    run(ctx, job, yes=yes)
 
 # Configuration of pywikibot
 @task
@@ -133,7 +133,7 @@ def configure_pywikibot(ctx, yes=False):
     job = [
     "cd core/; python pwb.py basic",    # issue: ctx.run stops after this line
     ]
-    install(ctx, job, yes=yes)
+    run(ctx, job, yes=yes)
 
 # Configuration of docker for running tests
 @task
@@ -142,7 +142,36 @@ def configure_docker(ctx, yes=False):
     job = [
     "sudo docker pull drtrigon/catimages-gsoc",
     ]
-    install(ctx, job, yes=yes)
+    run(ctx, job, yes=yes)
+
+# Test of pywikibot-catfiles scripts (and file-metadata)
+@task
+def test_script(ctx, yes=False, git=False):
+    test_script_simple_bot(ctx, yes=yes)
+    test_script_bulk(ctx, yes=yes, git=git)
+
+def test_script_simple_bot(ctx, yes=False):
+    p   = params(yes=yes)
+    job = [
+    "cd core/; python pwb.py file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5",
+    ]
+    run(ctx, job, yes=yes)
+
+def test_script_bulk(ctx, yes=False, git=False):
+    p   = params(yes=yes)
+    job = [
+    "sudo apt-get install python-opencv",
+    "sudo pip install retry",
+    ]
+    if git:
+        job += [
+    "cd core/; wget https://raw.githubusercontent.com/AbdealiJK/file-metadata/bulk/tests/bulk.py",
+    "cd core/; wget https://gist.githubusercontent.com/drtrigon/a1945629d1e7d7f566045629a43c0b06/raw/b4bebe0d476fa61d26b2146558d4f9535cb91f09/bulk.diff; patch -p1 < bulk.diff",
+    ]
+    job += [
+    "cd core/; python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1",
+    ]
+    run(ctx, job, yes=yes)
 
 # Test of docker image contained scripts
 @task
@@ -154,4 +183,4 @@ def test_docker(ctx, yes=False):
     "sudo docker run -it drtrigon/catimages-gsoc \"cd /opt/pywikibot-core/; python pwb.py basic; cd /; python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"",
 #    "sudo docker run -it drtrigon/catimages-gsoc \"python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"",
     ]
-    install(ctx, job, yes=yes)
+    run(ctx, job, yes=yes)
