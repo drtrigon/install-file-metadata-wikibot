@@ -98,7 +98,7 @@ def install_pywikibot(ctx, yes=False):
     "sudo apt-get %(yes)s update" % p,
     "sudo apt-get %(yes)s install git git-review" % p,
     "git clone --branch 2.0 --recursive https://gerrit.wikimedia.org/r/pywikibot/core.git",
-    "cd core/; python pwb.py basic",    # issue: ctx.run stops after this line
+#    "cd core/; python pwb.py basic",    # issue: ctx.run stops after this line
     ]
     install(ctx, job, yes=yes)
 

@@ -6,12 +6,15 @@ os:
   - linux
 
 env:
-  - TEST_DIR=tilt-client
-  - TEST_DIR=tilt-server
+  - TEST_CMD=invoke install_file_metadata_spm install_pywikibot install_file_metadata_bot
+  - TEST_CMD=invoke install_file_metadata_pip install_pywikibot install_file_metadata_bot
+#  - TEST_CMD=invoke install_pywikibot install_file_metadata_git install_file_metadata_bot; \
+  - TEST_CMD=invoke install_pywikibot --yes install_file_metadata_git --yes; \
+#  - TEST_CMD=invoke install_docker --yes
 
 #before_script:
 #  - curl -L "http://downloads.sourceforge.net/shunit2/shunit2-2.0.3.tgz" | tar zx
 
 script: 
 #  - cd $TEST_DIR && npm install && npm test
-  - echo $TEST_DIR
+  - $TEST_CMD
