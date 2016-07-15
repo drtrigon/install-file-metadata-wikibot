@@ -140,6 +140,18 @@ def configure_pywikibot(ctx, yes=False):
 def configure_docker(ctx, yes=False):
     p   = params(yes=yes)
     job = [
-    "sudo docker pull drtrigon/catimages-gsoc"
+    "sudo docker pull drtrigon/catimages-gsoc",
+    ]
+    install(ctx, job, yes=yes)
+
+# Test of docker image contained scripts
+@task
+def test_docker(ctx, yes=False):
+    p   = params(yes=yes)
+    job = [
+    "sudo docker run -it drtrigon/catimages-gsoc \"cd /opt/pywikibot-core/; python pwb.py basic; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd /\"",
+#    "sudo docker run -it drtrigon/catimages-gsoc \"cd /opt/pywikibot-core; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd /\"",
+    "sudo docker run -it drtrigon/catimages-gsoc \"cd /opt/pywikibot-core/; python pwb.py basic; cd /; python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"",
+#    "sudo docker run -it drtrigon/catimages-gsoc \"python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"",
     ]
     install(ctx, job, yes=yes)
