@@ -195,6 +195,11 @@ def configure_docker(ctx, yes=False):
 @task
 #@disabled
 def test_script(ctx, yes=False, git=False):
+    p   = params(yes=yes)
+    job = [
+    "sudo pip install retry",
+    ]
+    run(ctx, job, yes=yes)
     test_script_simple_bot(ctx, yes=yes)
     test_script_bulk(ctx, yes=yes, git=git)
 
@@ -209,7 +214,6 @@ def test_script_bulk(ctx, yes=False, git=False):
     p   = params(yes=yes)
     job = [
     "sudo apt-get install python-opencv",
-    "sudo pip install retry",
     "cd core/; wget https://raw.githubusercontent.com/pywikibot-catfiles/file-metadata/ajk/work/file_metadata/wikibot/bulk_bot.py",
     ]
 #    if git:
