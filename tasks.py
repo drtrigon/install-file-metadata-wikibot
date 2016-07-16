@@ -210,10 +210,10 @@ def test_script_bulk(ctx, yes=False, git=False):
     job = [
     "sudo apt-get install python-opencv",
     "sudo pip install retry",
+    "cd core/; wget https://raw.githubusercontent.com/AbdealiJK/file-metadata/bulk/tests/bulk.py",
     ]
     if git:
         job += [
-    "cd core/; wget https://raw.githubusercontent.com/AbdealiJK/file-metadata/bulk/tests/bulk.py",
     "cd core/; wget https://gist.githubusercontent.com/drtrigon/a1945629d1e7d7f566045629a43c0b06/raw/b4bebe0d476fa61d26b2146558d4f9535cb91f09/bulk.diff; patch -p1 < bulk.diff",
     ]
     job += [
@@ -231,9 +231,7 @@ def test_docker(ctx, yes=False, travis=False):
     p   = params(yes=yes)
     p['travis'] = '-i' if travis else '-it'
     job = [
-    "sudo docker run %(travis)s drtrigon/catimages-gsoc \"cd /opt/pywikibot-core/; python pwb.py basic; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd /\"" % p,
-#    "sudo docker run %(travis)s drtrigon/catimages-gsoc \"cd /opt/pywikibot-core; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd /\"" % p,
-    "sudo docker run %(travis)s drtrigon/catimages-gsoc \"cd /opt/pywikibot-core/; python pwb.py basic; cd /; python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"" % p,
-#    "sudo docker run %(travis)s drtrigon/catimages-gsoc \"python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"" % p,
+    "sudo docker run %(travis)s drtrigon/catimages-gsoc \"cd /opt/pywikibot-core; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd /\"" % p,
+    "sudo docker run %(travis)s drtrigon/catimages-gsoc \"python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"" % p,
     ]
     run(ctx, job, yes=yes)
