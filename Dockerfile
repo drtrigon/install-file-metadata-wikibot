@@ -43,33 +43,3 @@ RUN echo "\n" \
 "  cd /opt/pywikibot-core; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd / \n" \
 "RUN bulk.py BY ENTERING: \n" \
 "  python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/ \n"
-
-# (run tests here ... may be do unittests or run a bot script)
-
-# docker:
-#
-# unittests
-# coverage
-# https://github.com/pywikibot-catfiles/file-metadata/blob/master/.travis.yml#L60
-# script:
-#   - flake8 setup.py setupdeps.py file_metadata tests
-#   - python -m pytest --cov ;
-#   - python setup.py sdist bdist bdist_wheel
-#
-#
-# https://www.huyng.com/posts/python-performance-analysis
-#
-# profiling
-# http://stackoverflow.com/questions/582336/how-can-you-profile-a-python-script
-# -> python -m cProfile myscript.py
-# https://zapier.com/engineering/profiling-python-boss/
-# -> https://pypi.python.org/pypi/line_profiler/
-# https://pymotw.com/2/profile/
-# https://julien.danjou.info/blog/2015/guide-to-python-profiling-cprofile-concrete-case-carbonara
-# -> generate stats and graphs
-#
-# memory profiling
-# http://www.vrplumber.com/programming/runsnakerun/
-# -> https://pypi.python.org/pypi/memory_profiler
-# -> generate stats and graphs
-# (https://pypi.python.org/pypi/meliae)
