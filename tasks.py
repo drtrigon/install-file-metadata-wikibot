@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Hi There!
 # This script serves for the purpose of installing a testing environment to a
@@ -14,12 +15,35 @@
 # Inspired by https://github.com/pypa/get-pip/blob/master/get-pip.py
 #         and http://www.pyinvoke.org/
 
+from __future__ import (division, absolute_import, unicode_literals,
+print_function)
+
 from invoke import task
+import logging, inspect
+
+logging.basicConfig(
+#    filename = fileName,
+#    format = "%(levelname) -10s %(asctime)s %(module)s:%(lineno)s %(funcName)s %(message)s",
+    format = "%(levelname) -10s %(asctime)s %(message)s",
+#    level = logging.DEBUG
+    level = logging.INFO
+)
+cmdno = 0
 
 # Install procedure
 def run(ctx, job, yes=False):
+    global cmdno
     for cmd in job:
-        print "\n", ("--- " * 10), "\n", cmd, "\n", ("--- " * 10)
+        print("\n", ("--- " * 18))#, "\n", cmd)
+        lvl = 0
+        for item in inspect.stack()[1:][::-1]:
+            if 'catimages-gsoc/tasks.py' not in item[1]:
+                continue
+            lvl += 1
+            logging.info("%s> %s:%s" % (("-"*lvl), item[3], item[2]))
+        cmdno += 1
+        logging.info("Step %i : %s" % (cmdno, cmd))
+        print("--- " * 18)
         if not yes:
             raw_input("[Enter] to continue or [Ctrl]+C to stop ...")
         ctx.run(cmd)
