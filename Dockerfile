@@ -29,9 +29,13 @@ RUN apt-get -y install libmagickwand-dev
 # Setup of bulk.py
 RUN apt-get install python-opencv
 RUN pip install retry httplib2 --upgrade
-RUN wget https://raw.githubusercontent.com/AbdealiJK/file-metadata/95cc2abb3506608266b1faf0da0722433ad6b03b/tests/bulk.py
+#RUN wget https://raw.githubusercontent.com/AbdealiJK/file-metadata/95cc2abb3506608266b1faf0da0722433ad6b03b/tests/bulk.py
+RUN wget https://github.com/pywikibot-catfiles/file-metadata/blob/ajk/work/file_metadata/wikibot/bulk_bot.py
+#ADD https://github.com/pywikibot-catfiles/file-metadata/blob/ajk/work/file_metadata/wikibot/bulk_bot.py
 
 ##################### INSTALLATION END #####################
+
+ADD user-config.py /opt/pywikibot-core/
 
 # Show some info about the docker image
 RUN echo "\n" \
@@ -40,6 +44,6 @@ RUN echo "\n" \
 "  cd /opt/pywikibot-core; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd / \n" \
 "RUN bulk.py BY ENTERING: \n" \
 "  cd /opt/pywikibot-core/; python pwb.py basic; cd / \n" \
-"  python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/ \n"
+"  python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/ \n"
 
 # (run tests here ... may be do unittests or run a bot script)
