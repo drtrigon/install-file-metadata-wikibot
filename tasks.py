@@ -6,10 +6,10 @@
 # Kubuntu VirtualBox guest as described in User:DrTrigon/file-metadata:
 # https://commons.wikimedia.org/wiki/User:DrTrigon/file-metadata
 #
-# Usage: $ invoke install_file_metadata_spm install_pywikibot install_file_metadata_bot; invoke install_file_metadata_bot
-#        $ invoke install_file_metadata_pip install_pywikibot install_file_metadata_bot; invoke install_file_metadata_bot
-#        $ invoke install_pywikibot install_file_metadata_git install_file_metadata_bot; invoke install_file_metadata_git install_file_metadata_bot
-#        $ invoke install_pywikibot --yes install_file_metadata_git --yes; invoke install_file_metadata_git --yes
+# Usage: $ invoke install_file_metadata_spm install_pywikibot install_file_metadata_bot
+#        $ invoke install_file_metadata_pip install_pywikibot install_file_metadata_bot
+#        $ invoke install_pywikibot install_file_metadata_git (install_file_metadata_bot)
+#        $ invoke install_pywikibot --yes install_file_metadata_git --yes
 #        $ invoke install_docker --yes
 #
 # Inspired by https://github.com/pypa/get-pip/blob/master/get-pip.py
@@ -144,6 +144,7 @@ def install_pywikibot(ctx, yes=False):
     "git clone --branch 2.0 --recursive https://gerrit.wikimedia.org/r/pywikibot/core.git",
     ]
     run(ctx, job, yes=yes)
+    configure_pywikibot(ctx, yes=yes)
 
 # Test bot script
 @task
@@ -169,6 +170,7 @@ def install_docker(ctx, yes=False):
     #"sudo service docker start" % p,
     ]
     run(ctx, job, yes=yes)
+    configure_docker(ctx, yes=yes)
 
 # Configuration of pywikibot
 @task
