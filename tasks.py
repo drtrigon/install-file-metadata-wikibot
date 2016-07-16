@@ -19,6 +19,7 @@ from __future__ import (division, absolute_import, unicode_literals,
 print_function)
 
 from invoke import task
+from functools import wraps
 import logging, inspect
 
 logging.basicConfig(
@@ -34,7 +35,7 @@ cmdno = 0
 def run(ctx, job, yes=False):
     global cmdno
     for cmd in job:
-        print("\n", ("--- " * 18))#, "\n", cmd)
+        print("\n" + ("--- " * 18))
         lvl = 0
         for item in inspect.stack()[1:][::-1]:
             if 'catimages-gsoc/tasks.py' not in item[1]:
@@ -48,9 +49,22 @@ def run(ctx, job, yes=False):
             raw_input("[Enter] to continue or [Ctrl]+C to stop ...")
         ctx.run(cmd)
 
+# Parameter procesing
 def params(*args, **kwargs):
     kwargs['yes'] = '--yes' if kwargs['yes'] else ''
     return kwargs
+
+# Decorator for disabling tasks
+def disabled(func):
+    @wraps(func)
+    def decorated(ctx, *args, **kwargs):
+        print("\n" + ("--- " * 18))
+        logging.info("DISABLED : %s" % func)
+        print("--- " * 18)
+        #return func(ctx, *args, **kwargs)
+        #return (lambda ctx, *args, **kwargs: None)
+        return (lambda: None)
+    return decorated
 
 # Test through system package management
 @task
@@ -170,10 +184,8 @@ def configure_docker(ctx, yes=False):
 
 # Test of pywikibot-catfiles scripts (and file-metadata)
 @task
+@disabled
 def test_script(ctx, yes=False, git=False):
-    print("test_script DISABLED")
-    return
-
     test_script_simple_bot(ctx, yes=yes)
     test_script_bulk(ctx, yes=yes, git=git)
 
@@ -202,10 +214,8 @@ def test_script_bulk(ctx, yes=False, git=False):
 
 # Test of docker image contained scripts
 @task
+@disabled
 def test_docker(ctx, yes=False, travis=False):
-    print("test_docker DISABLED")
-    return
-
     p   = params(yes=yes)
     p['travis'] = '-i' if travis else '-it'
     job = [
