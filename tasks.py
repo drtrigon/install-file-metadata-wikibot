@@ -19,7 +19,7 @@ from __future__ import (division, absolute_import, unicode_literals,
 print_function)
 
 from invoke import task
-from functools import wraps
+#from functools import wraps
 import logging, inspect
 
 logging.basicConfig(
@@ -54,17 +54,23 @@ def params(*args, **kwargs):
     kwargs['yes'] = '--yes' if kwargs['yes'] else ''
     return kwargs
 
-# Decorator for disabling tasks
+## Decorator for disabling tasks
+#def disabled(func):
+#    @wraps(func)
+#    def decorated(ctx, *args, **kwargs):
+#        print("\n" + ("--- " * 18))
+#        logging.info("DISABLED : %s" % func)
+#        print("--- " * 18)
+#        #return func(ctx, *args, **kwargs)
+#        #return (lambda ctx, *args, **kwargs: None)
+#        return (lambda: None)
+#    return decorated
+
+# Function for disabling tasks
 def disabled(func):
-    @wraps(func)
-    def decorated(ctx, *args, **kwargs):
-        print("\n" + ("--- " * 18))
-        logging.info("DISABLED : %s" % func)
-        print("--- " * 18)
-        #return func(ctx, *args, **kwargs)
-        #return (lambda ctx, *args, **kwargs: None)
-        return (lambda: None)
-    return decorated
+    print("\n" + ("--- " * 18))
+    logging.info("DISABLED : %s" % func)
+    print("--- " * 18)
 
 # Test through system package management
 @task
@@ -184,8 +190,11 @@ def configure_docker(ctx, yes=False):
 
 # Test of pywikibot-catfiles scripts (and file-metadata)
 @task
-@disabled
+#@disabled
 def test_script(ctx, yes=False, git=False):
+    disabled(test_script)
+    return
+
     test_script_simple_bot(ctx, yes=yes)
     test_script_bulk(ctx, yes=yes, git=git)
 
@@ -214,8 +223,11 @@ def test_script_bulk(ctx, yes=False, git=False):
 
 # Test of docker image contained scripts
 @task
-@disabled
+#@disabled
 def test_docker(ctx, yes=False, travis=False):
+    disabled(test_docker)
+    return
+
     p   = params(yes=yes)
     p['travis'] = '-i' if travis else '-it'
     job = [
