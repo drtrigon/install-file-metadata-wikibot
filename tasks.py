@@ -151,8 +151,8 @@ def install_pywikibot(ctx, yes=False):
 def install_file_metadata_bot(ctx, yes=False):
     p   = params(yes=yes)
     job = [
-    "sudo apt-get %(yes)s install libmagickwand-dev" % p,
-    #"cd core/; wget https://gist.githubusercontent.com/AbdealiJK/a94fc0d0445c2ad715d9b1b95ec2ba03/raw/1dcd1fb8c168608c28e20ff50e9284700f61b90d/file_metadata_bot.py",
+#    "sudo apt-get %(yes)s install libmagickwand-dev" % p,
+    "cd core/; wget https://raw.githubusercontent.com/pywikibot-catfiles/file-metadata/master/file_metadata/wikibot/simple_bot.py",
     ]
     run(ctx, job, yes=yes)
 
@@ -201,7 +201,7 @@ def test_script(ctx, yes=False, git=False):
 def test_script_simple_bot(ctx, yes=False):
     p   = params(yes=yes)
     job = [
-    "cd core/; python pwb.py file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5",
+    "cd core/; python pwb.py simple_bot.py -cat:SVG_files -limit:5",
     ]
     run(ctx, job, yes=yes)
 
@@ -229,9 +229,9 @@ def test_docker(ctx, yes=False):
 #    p['travis'] = '-i' if travis else '-it'
     p['travis'] = '-i'  # use -i instead of -it due to tty
     job = [
-    "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core && python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5 && cd /\"" % p,
+#    "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core && python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5 && cd /\"" % p,
     #"sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"" % p,
-#    "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dir:/opt/pywikibot-core/\"" % p,
+    "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dir:/opt/pywikibot-core/\"" % p,
 # !!!TODO: need a way to run bulk_bot.py w/o needing to enter a passwd, e.g. like -simulate
 
 # docker:
