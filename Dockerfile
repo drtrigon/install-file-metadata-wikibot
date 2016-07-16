@@ -9,6 +9,12 @@ FROM pywikibotcatfiles/file-metadata
 # File Author / Maintainer
 MAINTAINER DrTrigon <dr.trigon@surfeu.ch>
 
+# Set the locale (http://jaredmarkell.com/docker-and-locales/)
+RUN locale-gen de_CH.UTF-8
+ENV LANG de_CH.UTF-8
+ENV LANGUAGE de_CH:de
+ENV LC_ALL de_CH.UTF-8
+
 # Update the repository sources list
 RUN apt-get update
 
