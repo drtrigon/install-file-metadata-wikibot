@@ -13,7 +13,7 @@ env:
   - TEST_CMD="invoke install_file_metadata_pip --yes install_pywikibot --yes install_file_metadata_bot --yes test_script --yes"  # trusty only, needs openjdk-7-jre
   #- TEST_CMD="invoke install_pywikibot --yes install_file_metadata_git --yes install_file_metadata_bot --yes"
   - TEST_CMD="invoke install_pywikibot --yes install_file_metadata_git --yes test_script --yes --git"
-  - TEST_CMD="invoke configure_docker --yes test_docker --yes --travis"
+  - TEST_CMD="invoke configure_docker --yes test_docker --yes"
 
 before_install:
   - sudo apt-get -qq update

@@ -175,7 +175,8 @@ def install_docker(ctx, yes=False):
 def configure_pywikibot(ctx, yes=False):
     p   = params(yes=yes)
     job = [
-    "cd core/; python pwb.py basic",    # issue: ctx.run stops after this line
+    #"cd core/; python pwb.py basic",    # issue: ctx.run stops after this line
+    "cd core/; wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/master/user-config.py",
     ]
     run(ctx, job, yes=yes)
 
@@ -192,9 +193,6 @@ def configure_docker(ctx, yes=False):
 @task
 #@disabled
 def test_script(ctx, yes=False, git=False):
-    disabled(test_script)
-    return
-
     test_script_simple_bot(ctx, yes=yes)
     test_script_bulk(ctx, yes=yes, git=git)
 
@@ -210,28 +208,28 @@ def test_script_bulk(ctx, yes=False, git=False):
     job = [
     "sudo apt-get install python-opencv",
     "sudo pip install retry",
-    "cd core/; wget https://raw.githubusercontent.com/AbdealiJK/file-metadata/bulk/tests/bulk.py",
+    "cd core/; wget https://raw.githubusercontent.com/pywikibot-catfiles/file-metadata/ajk/work/file_metadata/wikibot/bulk_bot.py",
     ]
-    if git:
-        job += [
-    "cd core/; wget https://gist.githubusercontent.com/drtrigon/a1945629d1e7d7f566045629a43c0b06/raw/b4bebe0d476fa61d26b2146558d4f9535cb91f09/bulk.diff; patch -p1 < bulk.diff",
-    ]
+#    if git:
+#        job += [
+#    "cd core/; wget https://gist.githubusercontent.com/drtrigon/a1945629d1e7d7f566045629a43c0b06/raw/b4bebe0d476fa61d26b2146558d4f9535cb91f09/bulk.diff; patch -p1 < bulk.diff",
+#    ]
     job += [
-    "cd core/; python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1",
+    "cd core/; python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1",
     ]
     run(ctx, job, yes=yes)
 
 # Test of docker image contained scripts
 @task
 #@disabled
-def test_docker(ctx, yes=False, travis=False):
-    disabled(test_docker)
-    return
-
+def test_docker(ctx, yes=False):
     p   = params(yes=yes)
-    p['travis'] = '-i' if travis else '-it'
+#    p['travis'] = '-i' if travis else '-it'
+    p['travis'] = '-i'  # use -i instead of -it due to tty
     job = [
-    "sudo docker run %(travis)s drtrigon/catimages-gsoc \"cd /opt/pywikibot-core; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd /\"" % p,
-    "sudo docker run %(travis)s drtrigon/catimages-gsoc \"python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"" % p,
+    "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5; cd /\"" % p,
+    #"sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"" % p,
+#    "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dir:/opt/pywikibot-core/\"" % p,
+# !!!TODO: need a way to run bulk_bot.py w/o needing to enter a passwd, e.g. like -simulate
     ]
     run(ctx, job, yes=yes)
