@@ -235,7 +235,8 @@ def test_docker(ctx, yes=False):
     job = [
 #    "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core && python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5 && cd /\"" % p,
     #"sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"" % p,
-    "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dir:/opt/pywikibot-core/\"" % p,
+# login.py -pass:$PYWIKIBOT_PASS
+    "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dir:/opt/pywikibot-core/ -pass:$PYWIKIBOT_PASS\"" % p,
 # !!!TODO: need a way to run bulk_bot.py w/o needing to enter a passwd, e.g. like -simulate
 
 # docker:
