@@ -42,7 +42,9 @@ RUN wget https://raw.githubusercontent.com/pywikibot-catfiles/file-metadata/ajk/
 ##################### INSTALLATION END #####################
 
 ADD user-config.py /opt/pywikibot-core/
-ADD pywikibot.lwp.no-token /opt/pywikibot-core/  # hacky login.py replacemement
+# hacky login.py replacemement:
+ADD pywikibot.lwp.hack /opt/pywikibot-core/
+ADD login-hack.py /opt/pywikibot-core/
 
 # Show some info about the docker image
 RUN echo "\n" \
