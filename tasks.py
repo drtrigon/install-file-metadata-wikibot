@@ -236,6 +236,7 @@ def test_docker(ctx, yes=False):
 #    "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core && python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5 && cd /\"" % p,
 
     #"sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"" % p,
+    "sudo docker run %(travis)s drtrigon/catimages-gsoc python -c\"import os;print(os.environ)\"" % p,
     "sudo docker run %(travis)s drtrigon/catimages-gsoc python -c\"import os;open('/opt/pywikibot-core/pywikibot.lwp', 'w').write(open('/opt/pywikibot-core/pywikibot.lwp.no-token', 'r').read() % os.environ)\"" % p,  # hacky login.py replacement
     "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core && python pwb.py login.py\"" % p,  # check login
     "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core && python pwb.py login.py -pass:$PYWIKIBOT_PASS\"" % p,
