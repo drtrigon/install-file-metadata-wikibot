@@ -220,22 +220,22 @@ def test_script_simple_bot(ctx, yes=False, git=False):
     ]
     else:
         job = [
-    "locale",
-    "sudo dpkg-reconfigure locales",  # generate locales
-    #"locale-gen de_CH.UTF-8",
-    "locale",
-#    "export LC_ALL=de_CH.UTF-8",      # set locale
-#    "export LANG=de_CH.UTF-8",
-#    "export LANGUAGE=de_CH.UTF-8",
-#    #"export LANGUAGE=de_CH:de",
-    "export LC_ALL=en_GB.UTF-8",      # set locale
-    "export LANG=en_GB.UTF-8",
-    "export LANGUAGE=en_GB.UTF-8",
-    #"export LANGUAGE=en_GB:en",
-    "locale",
-    "source ~/.bashrc",
-    "locale",                         # check locale setting
-    "cd core/; python pwb.py file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5",
+#    "locale",
+#    "sudo dpkg-reconfigure locales",  # generate locales
+#    #"locale-gen de_CH.UTF-8",
+#    "locale",
+##    "export LC_ALL=de_CH.UTF-8",      # set locale
+##    "export LANG=de_CH.UTF-8",
+##    "export LANGUAGE=de_CH.UTF-8",
+##    #"export LANGUAGE=de_CH:de",
+#    "export LC_ALL=en_GB.UTF-8",      # set locale
+#    "export LANG=en_GB.UTF-8",
+#    "export LANGUAGE=en_GB.UTF-8",
+#    #"export LANGUAGE=en_GB:en",
+#    "locale",
+#    "source ~/.bashrc",
+#    "locale",                         # check locale setting
+    "cd core/; export PYTHONIOENCODING=UTF-8; python pwb.py file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5",
     ]
     run(ctx, job, yes=yes)
 
@@ -247,6 +247,7 @@ def test_script_bulk(ctx, yes=False, git=False):
     ]
     if git:
         job += [
+# hacky login.py replacement:
     "cd core/ && wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/master/pywikibot.lwp.hack",
     "cd core/ && wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/master/login-hack.py",
     "cd core/ && python login-hack.py $PYWIKIBOT_TOKEN",
