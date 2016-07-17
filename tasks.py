@@ -288,7 +288,8 @@ def test_script_bulk(ctx, yes=False, git=False):
           "-search:'eth-bib' -limit:5 -logname:test",
         "sudo pip install line_profiler memory_profiler",
         "cd core/; python -m cProfile -s time bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -logname:test",
+          "-search:'eth-bib' -limit:5 -logname:test > profile.out && "
+          "head profile.out -n 100",
         "cd core/; kernprof -l -v bulk_bot.py "
           "-search:'eth-bib' -limit:5 -logname:test && "
           "python -m line_profiler bulk_bot.py.lprof ",
