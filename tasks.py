@@ -193,14 +193,7 @@ def configure_docker(ctx, yes=False):
 
 # Test of pywikibot-catfiles scripts (and file-metadata)
 @task
-#@disabled
 def test_script(ctx, yes=False, git=False):
-    p   = params(yes=yes)
-#    job = [
-##    "sudo pip install retry",
-#    "sudo pip install retry --upgrade",
-#    ]
-#    run(ctx, job, yes=yes)
 #    test_script_simple_bot(ctx, yes=yes, git=git)
     test_script_bulk(ctx, yes=yes, git=git)
 # !!!TODO: should be runned first (see above), but since it has an error and the other not atm I swapped them temporarily
@@ -214,7 +207,6 @@ def test_script_simple_bot(ctx, yes=False, git=False):
     ]
     else:
         job = [
-    #"cd core/; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5",
     "cd core/; python pwb.py file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5",
     ]
     run(ctx, job, yes=yes)
@@ -225,19 +217,21 @@ def test_script_bulk(ctx, yes=False, git=False):
     "sudo apt-get install python-opencv",
     "cd core/; wget https://raw.githubusercontent.com/pywikibot-catfiles/file-metadata/ajk/work/file_metadata/wikibot/bulk_bot.py",
     ]
-#    if git:
-#        job += [
-#    "cd core/; wget https://gist.githubusercontent.com/drtrigon/a1945629d1e7d7f566045629a43c0b06/raw/b4bebe0d476fa61d26b2146558d4f9535cb91f09/bulk.diff; patch -p1 < bulk.diff",
-#    ]
+    if git:
+        job += [
+    "cd core/ && wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/master/pywikibot.lwp.hack",
+    "cd core/ && wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/master/login-hack.py",
+    "cd core/ && python login-hack.py $PYWIKIBOT_TOKEN",
+    "cd core/ && python pwb.py login.py",
+    ]
     job += [
-#    "cd core/; python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1",
+    #"cd core/; python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1",
     "cd core/; python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test",
     ]
     run(ctx, job, yes=yes)
 
 # Test of docker image contained scripts
 @task
-#@disabled
 def test_docker(ctx, yes=False):
     p   = params(yes=yes)
 #    p['travis'] = '-i' if travis else '-it'
