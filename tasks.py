@@ -14,6 +14,19 @@
 #
 # Inspired by https://github.com/pypa/get-pip/blob/master/get-pip.py
 #         and http://www.pyinvoke.org/
+#
+# Performance Analysis (Time and Memory Profiling):
+# * https://www.huyng.com/posts/python-performance-analysis
+#
+# * http://stackoverflow.com/questions/582336/how-can-you-profile-a-python-script
+# * https://zapier.com/engineering/profiling-python-boss/
+# * https://pymotw.com/2/profile/
+# * https://julien.danjou.info/blog/2015/guide-to-python-profiling-cprofile-concrete-case-carbonara
+#   -> generate stats and graphs
+#
+# * http://www.vrplumber.com/programming/runsnakerun/
+#   -> generate stats and graphs
+# * (https://pypi.python.org/pypi/meliae)
 
 from __future__ import (division, absolute_import, unicode_literals,
 print_function)
@@ -207,6 +220,17 @@ def test_script_simple_bot(ctx, yes=False, git=False):
     ]
     else:
         job = [
+    "locale",
+    "dpkg-reconfigure locales",     # generate locales
+    #"locale-gen de_CH.UTF-8",
+    "locale",
+    "export LC_ALL=de_CH.UTF-8",    # set locale
+    "export LANG=de_CH.UTF-8",
+    "export LANGUAGE=de_CH.UTF-8",
+    #"export LANGUAGE=de_CH:de",
+    "locale",
+    "source ~/.bashrc",
+    "locale",                       # check locale setting
     "cd core/; python pwb.py file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5",
     ]
     run(ctx, job, yes=yes)
@@ -227,6 +251,10 @@ def test_script_bulk(ctx, yes=False, git=False):
     job += [
     #"cd core/; python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1",
     "cd core/; python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test",
+    "sudo pip install line_profiler memory_profiler",
+    "python -m cProfile bulk_bot.py -search:'eth-bib' -limit:5 -logname:test",
+    "kernprof -l -v bulk_bot.py -search:'eth-bib' -limit:5 -logname:test && python -m line_profiler bulk_bot.py.lprof ",
+    "python -m memory_profiler bulk_bot.py -search:'eth-bib' -limit:5 -logname:test",
     ]
     run(ctx, job, yes=yes)
 
@@ -259,23 +287,5 @@ def test_docker(ctx, yes=False):
 #   - flake8 setup.py setupdeps.py file_metadata tests
 #   - python -m pytest --cov ;
 #   - python setup.py sdist bdist bdist_wheel
-#
-#
-# https://www.huyng.com/posts/python-performance-analysis
-#
-# profiling
-# http://stackoverflow.com/questions/582336/how-can-you-profile-a-python-script
-# -> python -m cProfile myscript.py
-# https://zapier.com/engineering/profiling-python-boss/
-# -> https://pypi.python.org/pypi/line_profiler/
-# https://pymotw.com/2/profile/
-# https://julien.danjou.info/blog/2015/guide-to-python-profiling-cprofile-concrete-case-carbonara
-# -> generate stats and graphs
-#
-# memory profiling
-# http://www.vrplumber.com/programming/runsnakerun/
-# -> https://pypi.python.org/pypi/memory_profiler
-# -> generate stats and graphs
-# (https://pypi.python.org/pypi/meliae)
     ]
     run(ctx, job, yes=yes)
