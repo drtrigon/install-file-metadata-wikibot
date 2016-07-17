@@ -196,11 +196,11 @@ def configure_docker(ctx, yes=False):
 #@disabled
 def test_script(ctx, yes=False, git=False):
     p   = params(yes=yes)
-    job = [
-#    "sudo pip install retry",
-    "sudo pip install retry --upgrade",
-    ]
-    run(ctx, job, yes=yes)
+#    job = [
+##    "sudo pip install retry",
+#    "sudo pip install retry --upgrade",
+#    ]
+#    run(ctx, job, yes=yes)
 #    test_script_simple_bot(ctx, yes=yes, git=git)
     test_script_bulk(ctx, yes=yes, git=git)
 # !!!TODO: should be runned first (see above), but since it has an error and the other not atm I swapped them temporarily
@@ -230,7 +230,8 @@ def test_script_bulk(ctx, yes=False, git=False):
 #    "cd core/; wget https://gist.githubusercontent.com/drtrigon/a1945629d1e7d7f566045629a43c0b06/raw/b4bebe0d476fa61d26b2146558d4f9535cb91f09/bulk.diff; patch -p1 < bulk.diff",
 #    ]
     job += [
-    "cd core/; python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1",
+#    "cd core/; python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1",
+    "cd core/; python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test",
     ]
     run(ctx, job, yes=yes)
 
