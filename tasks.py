@@ -206,7 +206,7 @@ def test_script(ctx, yes=False, git=False):
 # !!!TODO: should be runned first (see above), but since it has an error and the other not atm I swapped them temporarily
     test_script_simple_bot(ctx, yes=yes, git=git)
 
-def test_script_simple_bot(ctx, yes=False, git=git):
+def test_script_simple_bot(ctx, yes=False, git=False):
     p   = params(yes=yes)
     if not git:
         job = [
