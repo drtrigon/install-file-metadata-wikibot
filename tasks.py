@@ -68,7 +68,7 @@ def run(ctx, job, yes=False):
             if 'catimages-gsoc/tasks.py' not in item[1]:
                 continue
             lvl += 1
-            logging.info("%s> %s:%s" % (("-"*lvl), item[3], item[2]))
+            logging.info("%s> %s:%s" % (("-" * lvl), item[3], item[2]))
         cmdno += 1
         logging.info("Step %i : %s" % (cmdno, cmd))
         print("--- " * 18)
@@ -242,7 +242,7 @@ def configure_docker(ctx, yes=False):
     run(ctx, job, yes=yes)
 
 
-# Test of pywikibot-catfiles scripts (and file-metadata)
+# Test of pywikibot-catfiles scripts (and file-metadata) including analysis
 @task
 def test_script(ctx, yes=False, git=False):
     test_script_simple_bot(ctx, yes=yes, git=git)
@@ -282,8 +282,10 @@ def test_script_bulk(ctx, yes=False, git=False):
         "cd core/ && python pwb.py login.py",
     ]
     job += [
-        #"cd core/; python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1",
-        "cd core/; python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test",
+        #"cd core/; python bulk_bot.py "
+        #  "-search:'eth-bib' -limit:5 -logname:test -dryrun:1",
+        "cd core/; python bulk_bot.py "
+          "-search:'eth-bib' -limit:5 -logname:test",
         "sudo pip install line_profiler memory_profiler",
         "cd core/; python -m cProfile -s time bulk_bot.py "
           "-search:'eth-bib' -limit:5 -logname:test",
@@ -303,26 +305,34 @@ def test_docker(ctx, yes=False):
 #    p['travis'] = '-i' if travis else '-it'
     p['travis'] = '-i'  # use -i instead of -it due to tty
     job = [
-        "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core && python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5 && cd /\"" % p,
+        "sudo docker run %(travis)s drtrigon/catimages-gsoc "
+          "bash -c \"cd /opt/pywikibot-core && python pwb.py "
+          "../file-metadata/file_metadata/wikibot/simple_bot.py "
+          "-cat:SVG_files -limit:5 && cd /\"" % p,
 # hacky login.py replacement:
 # !!!ISSUE: make 'login.py -pass:xxx' work or use -oauth token
-# !!!TODO: need a way to run bulk_bot.py w/o needing to enter a passwd, e.g. like -simulate
-        #"sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"" % p,
-        "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core && python login-hack.py $PYWIKIBOT_TOKEN && "
-          "cd /opt/pywikibot-core && python pwb.py login.py\"" % p,  # check login
-        "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core && python login-hack.py $PYWIKIBOT_TOKEN && "
-          "cd /; python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dir:/opt/pywikibot-core/\"" % p,
-#        "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core && python pwb.py /bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dir:/opt/pywikibot-core/\"" % p,
-
-# docker:
-#
-# unittests
-# coverage
-# https://github.com/pywikibot-catfiles/file-metadata/blob/master/.travis.yml#L60
-# script:
-#   - flake8 setup.py setupdeps.py file_metadata tests
-#   - python -m pytest --cov ;
-#   - python setup.py sdist bdist bdist_wheel
+# !!!TODO: need a way to run bulk_bot.py w/o needing to enter a passwd,
+#          e.g. like -simulate
+        #"sudo docker run %(travis)s drtrigon/catimages-gsoc "
+        #  "bash -c \"python bulk.py -search:'eth-bib' "
+        #  "-limit:5 -logname:test -dryrun:1 "
+        #  "-dir:/opt/pywikibot-core/\"" % p,
+        "sudo docker run %(travis)s drtrigon/catimages-gsoc "
+          "bash -c \"cd /opt/pywikibot-core && "
+          "python login-hack.py $PYWIKIBOT_TOKEN && "
+          "cd /opt/pywikibot-core && "
+          "python pwb.py login.py\"" % p,  # check login
+        "sudo docker run %(travis)s drtrigon/catimages-gsoc "
+          "bash -c \"cd /opt/pywikibot-core && "
+          "python login-hack.py $PYWIKIBOT_TOKEN && "
+          "cd / && python bulk_bot.py "
+          "-search:'eth-bib' -limit:5 -logname:test "
+          "-dir:/opt/pywikibot-core/\"" % p,
+#        "sudo docker run %(travis)s drtrigon/catimages-gsoc "
+#          "bash -c \"cd /opt/pywikibot-core && "
+#          "python pwb.py /bulk_bot.py "
+#          "-search:'eth-bib' -limit:5 -logname:test "
+#          "-dir:/opt/pywikibot-core/\"" % p,
     ]
     run(ctx, job, yes=yes)
 
@@ -332,6 +342,7 @@ def test_docker(ctx, yes=False):
 def test_this(ctx, yes=False):
     job = [
         "sudo apt-get install python-flake8",
-        "flake8 tasks.py login-hack.py ",
+        #"flake8 tasks.py login-hack.py",
+        "flake8 --ignore=E121,E122,E128 tasks.py login-hack.py",
     ]
     run(ctx, job, yes=yes)
