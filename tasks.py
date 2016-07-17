@@ -224,10 +224,14 @@ def test_script_simple_bot(ctx, yes=False, git=False):
     "dpkg-reconfigure locales",     # generate locales
     #"locale-gen de_CH.UTF-8",
     "locale",
-    "export LC_ALL=de_CH.UTF-8",    # set locale
-    "export LANG=de_CH.UTF-8",
-    "export LANGUAGE=de_CH.UTF-8",
-    #"export LANGUAGE=de_CH:de",
+#    "export LC_ALL=de_CH.UTF-8",    # set locale
+#    "export LANG=de_CH.UTF-8",
+#    "export LANGUAGE=de_CH.UTF-8",
+#    #"export LANGUAGE=de_CH:de",
+    "export LC_ALL=en_GB.UTF-8",    # set locale
+    "export LANG=en_GB.UTF-8",
+    "export LANGUAGE=en_GB.UTF-8",
+    #"export LANGUAGE=en_GB:en",
     "locale",
     "source ~/.bashrc",
     "locale",                       # check locale setting
@@ -252,9 +256,9 @@ def test_script_bulk(ctx, yes=False, git=False):
     #"cd core/; python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1",
     "cd core/; python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test",
     "sudo pip install line_profiler memory_profiler",
-    "python -m cProfile bulk_bot.py -search:'eth-bib' -limit:5 -logname:test",
-    "kernprof -l -v bulk_bot.py -search:'eth-bib' -limit:5 -logname:test && python -m line_profiler bulk_bot.py.lprof ",
-    "python -m memory_profiler bulk_bot.py -search:'eth-bib' -limit:5 -logname:test",
+    "cd core/; python -m cProfile bulk_bot.py -search:'eth-bib' -limit:5 -logname:test",
+    "cd core/; kernprof -l -v bulk_bot.py -search:'eth-bib' -limit:5 -logname:test && python -m line_profiler bulk_bot.py.lprof ",
+    "cd core/; python -m memory_profiler bulk_bot.py -search:'eth-bib' -limit:5 -logname:test",
     ]
     run(ctx, job, yes=yes)
 
