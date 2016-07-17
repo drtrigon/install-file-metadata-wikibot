@@ -201,13 +201,21 @@ def test_script(ctx, yes=False, git=False):
     "sudo pip install retry --upgrade",
     ]
     run(ctx, job, yes=yes)
-    test_script_simple_bot(ctx, yes=yes)
+#    test_script_simple_bot(ctx, yes=yes, git=git)
     test_script_bulk(ctx, yes=yes, git=git)
+# !!!TODO: should be runned first (see above), but since it has an error and the other not atm I swapped them temporarily
+    test_script_simple_bot(ctx, yes=yes, git=git)
 
-def test_script_simple_bot(ctx, yes=False):
+def test_script_simple_bot(ctx, yes=False, git=git):
     p   = params(yes=yes)
-    job = [
-    "cd core/; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5"
+    if not git:
+        job = [
+    "cd core/; python pwb.py simple_bot.py -cat:SVG_files -limit:5",
+    ]
+    else:
+        job = [
+    #"cd core/; python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5",
+    "cd core/; python pwb.py file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5",
     ]
     run(ctx, job, yes=yes)
 
@@ -235,16 +243,17 @@ def test_docker(ctx, yes=False):
     p['travis'] = '-i'  # use -i instead of -it due to tty
     job = [
 #    "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core && python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5 && cd /\"" % p,
-
-    #"sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"" % p,
 # hacky login.py replacement:
 # !!!ISSUE: make 'login.py -pass:xxx' work or use -oauth token
+# !!!TODO: need a way to run bulk_bot.py w/o needing to enter a passwd, e.g. like -simulate
+    #"sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"python bulk.py -search:'eth-bib' -limit:5 -logname:test -dryrun:1 -dir:/opt/pywikibot-core/\"" % p,
     "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core && python login-hack.py $PYWIKIBOT_TOKEN && " \
       "cd /opt/pywikibot-core && python pwb.py login.py\"" % p,  # check login
     "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core && python login-hack.py $PYWIKIBOT_TOKEN && " \
       "cd /; python bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dir:/opt/pywikibot-core/\"" % p,
 #    "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core && python pwb.py /bulk_bot.py -search:'eth-bib' -limit:5 -logname:test -dir:/opt/pywikibot-core/\"" % p,
-# !!!TODO: need a way to run bulk_bot.py w/o needing to enter a passwd, e.g. like -simulate
+# !!!TODO: should be runned first (see above), but since it has an error and the other not atm I swapped them temporarily
+    "sudo docker run %(travis)s drtrigon/catimages-gsoc bash -c \"cd /opt/pywikibot-core && python pwb.py ../file-metadata/file_metadata/wikibot/simple_bot.py -cat:SVG_files -limit:5 && cd /\"" % p,
 
 # docker:
 #
