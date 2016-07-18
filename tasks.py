@@ -297,9 +297,8 @@ def test_script_bulk(ctx, yes=False, git=False):
           "python -m line_profiler bulk_bot.py.lprof ",
         "cd core/; python -m memory_profiler bulk_bot.py "
           "-search:'eth-bib' -limit:5 -logname:test",
-
         "cd core/; valgrind --tool=massif python bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -logname:test",
+          "-search:'eth-bib' -limit:5 -logname:test || true",  # ignore error
         #"cd core/; heaptrack python bulk_bot.py "
         #  "-search:'eth-bib' -limit:5 -logname:test",
         "cd core/; perf stat -r 1 python bulk_bot.py "
