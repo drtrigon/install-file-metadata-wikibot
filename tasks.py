@@ -266,8 +266,9 @@ def test_script_simple_bot(ctx, yes=False, git=False):
 
 
 def test_script_bulk(ctx, yes=False, git=False):
+    p = params(yes=yes)
     job = [
-        "sudo apt-get install python-opencv",
+        "sudo apt-get %(yes)s install python-opencv" % p,
         "cd core/; wget https://raw.githubusercontent.com/pywikibot-catfiles/"
           "file-metadata/ajk/work/file_metadata/wikibot/bulk_bot.py",
     ]
@@ -287,6 +288,7 @@ def test_script_bulk(ctx, yes=False, git=False):
         "cd core/; python bulk_bot.py "
           "-search:'eth-bib' -limit:5 -logname:test",
         "sudo pip install line_profiler memory_profiler",
+        "sudo apt-get %(yes)s install valgrind" % p,
         "cd core/; python -m cProfile -s time bulk_bot.py "
           "-search:'eth-bib' -limit:5 -logname:test > profile.out && "
           "head profile.out -n 100",
@@ -294,6 +296,15 @@ def test_script_bulk(ctx, yes=False, git=False):
           "-search:'eth-bib' -limit:5 -logname:test && "
           "python -m line_profiler bulk_bot.py.lprof ",
         "cd core/; python -m memory_profiler bulk_bot.py "
+          "-search:'eth-bib' -limit:5 -logname:test",
+
+        "cd core/; valgrind --tool=massif python bulk_bot.py "
+          "-search:'eth-bib' -limit:5 -logname:test",
+        #"cd core/; heaptrack python bulk_bot.py "
+        #  "-search:'eth-bib' -limit:5 -logname:test",
+        "cd core/; perf stat -r 1 python bulk_bot.py "
+          "-search:'eth-bib' -limit:5 -logname:test",
+        "cd core/; ltrace -c -f -S python bulk_bot.py "
           "-search:'eth-bib' -limit:5 -logname:test",
     ]
     run(ctx, job, yes=yes)
@@ -341,8 +352,9 @@ def test_docker(ctx, yes=False):
 # Test of THIS invoke script
 @task
 def test_this(ctx, yes=False):
+    p = params(yes=yes)
     job = [
-        "sudo apt-get install python-flake8",
+        "sudo apt-get %(yes)s install python-flake8" % p,
         #"flake8 tasks.py login-hack.py",
         "flake8 --ignore=E121,E122,E128 tasks.py login-hack.py",
     ]
