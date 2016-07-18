@@ -288,7 +288,7 @@ def test_script_bulk(ctx, yes=False, git=False):
         "cd core/; python bulk_bot.py "
           "-search:'eth-bib' -limit:5 -logname:test",
         "sudo pip install line_profiler memory_profiler",
-        "sudo apt-get %(yes)s install valgrind linux-tools-generic ltrace" % p,
+        "sudo apt-get %(yes)s install valgrind" % p,
         "cd core/; python -m cProfile -s time bulk_bot.py "
           "-search:'eth-bib' -limit:5 -logname:test > profile.out && "
           "head profile.out -n 100",
@@ -301,10 +301,6 @@ def test_script_bulk(ctx, yes=False, git=False):
           "-search:'eth-bib' -limit:5 -logname:test || true",  # ignore error
         #"cd core/; heaptrack python bulk_bot.py "
         #  "-search:'eth-bib' -limit:5 -logname:test",
-        "cd core/; perf stat -r 1 python bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -logname:test",
-        "cd core/; ltrace -c -f -S python bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -logname:test",
     ]
     run(ctx, job, yes=yes)
 
