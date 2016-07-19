@@ -26,6 +26,7 @@
 #
 # Performance Analysis (Time and Memory Profiling):
 # * https://www.huyng.com/posts/python-performance-analysis
+# * http://milianw.de/blog/heaptrack-a-heap-memory-profiler-for-linux
 #
 # * http://stackoverflow.com/questions/582336/ \
 #     how-can-you-profile-a-python-script
@@ -34,6 +35,14 @@
 # * https://julien.danjou.info/blog/2015/ \
 #     guide-to-python-profiling-cprofile-concrete-case-carbonara
 #   -> generate stats and graphs
+# * valgrind
+#   http://svn.python.org/projects/python/trunk/Misc/valgrind-python.supp
+#   $ valgrind --tool=massif --suppressions=valgrind-python.supp [prog]
+#   http://valgrind.org/docs/manual/ms-manual.html
+#   "If the output file format string (controlled by --massif-out-file) does
+#   not contain %p, then the outputs from the parent and child will be
+#   intermingled in a single output file, which will almost certainly make it
+#   unreadable by ms_print."
 #
 # * http://www.vrplumber.com/programming/runsnakerun/
 #   -> generate stats and graphs
@@ -245,6 +254,11 @@ def configure_docker(ctx, yes=False):
 # Test of pywikibot-catfiles scripts (and file-metadata) including analysis
 @task
 def test_script(ctx, yes=False, git=False):
+    p = params(yes=yes)
+    job = [
+        "sudo apt-get %(yes)s install python-opencv" % p,
+    ]
+    run(ctx, job, yes=yes)
     test_script_simple_bot(ctx, yes=yes, git=git)
     test_script_bulk(ctx, yes=yes, git=git)
 ## !!!TODO: should be runned first (see above), but since it has an error and
@@ -268,7 +282,6 @@ def test_script_simple_bot(ctx, yes=False, git=False):
 def test_script_bulk(ctx, yes=False, git=False):
     p = params(yes=yes)
     job = [
-        "sudo apt-get %(yes)s install python-opencv" % p,
         "cd core/; wget https://raw.githubusercontent.com/pywikibot-catfiles/"
           "file-metadata/ajk/work/file_metadata/wikibot/bulk_bot.py",
     ]
@@ -297,8 +310,10 @@ def test_script_bulk(ctx, yes=False, git=False):
           "python -m line_profiler bulk_bot.py.lprof ",
         "cd core/; python -m memory_profiler bulk_bot.py "
           "-search:'eth-bib' -limit:5 -logname:test",
-        "cd core/; valgrind --tool=massif python bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -logname:test || true",  # ignore error
+        "cd core/; valgrind --tool=massif --massif-out-file=massif.out "
+          "python bulk_bot.py "
+          "-search:'eth-bib' -limit:5 -logname:test || true && " # ignore error
+          "ls && ms_print massif.out",
         #"cd core/; heaptrack python bulk_bot.py "
         #  "-search:'eth-bib' -limit:5 -logname:test",
     ]
