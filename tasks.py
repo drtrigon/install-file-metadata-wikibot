@@ -144,6 +144,7 @@ def install_file_metadata_deps_spm(ctx, yes=False):
 
 
 def install_file_metadata(ctx, yes=False):
+    p = params(yes=yes)
     job = [
         #"sudo pip install file-metadata --upgrade",
         # work-a-round since above commands only installs 0.1.0 not dev! #
