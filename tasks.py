@@ -301,9 +301,6 @@ def test_script_bulk(ctx, yes=False, git=False):
         "cd core/ && wget https://raw.githubusercontent.com/"
           "pywikibot-catfiles/file-metadata/ajk/work/file_metadata/"
           "wikibot/bulk_bot.py",
-    ]
-    if git:
-        job += [
 # hacky login.py replacement:
         "cd core/ && wget https://raw.githubusercontent.com/drtrigon/"
           "catimages-gsoc/master/pywikibot.lwp.hack",
@@ -311,8 +308,6 @@ def test_script_bulk(ctx, yes=False, git=False):
           "catimages-gsoc/master/login-hack.py",
         "cd core/ && python login-hack.py $PYWIKIBOT_TOKEN",
         "cd core/ && python pwb.py login.py",
-    ]
-    job += [
         #"cd core/ && python bulk_bot.py "
         #  "-search:'eth-bib' -limit:5 -logname:test -dryrun:1",
         "cd core/ && python bulk_bot.py "
