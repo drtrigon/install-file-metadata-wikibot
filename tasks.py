@@ -145,7 +145,20 @@ def install_file_metadata_deps_spm(ctx, yes=False):
 
 def install_file_metadata(ctx, yes=False):
     job = [
-        "sudo pip install file-metadata --upgrade",
+        #"sudo pip install file-metadata --upgrade",
+        # work-a-round since above commands only installs 0.1.0 not dev! #
+        # file-metadata-0.1.0 was installed as:
+        # /usr/local/lib/python2.7/dist-packages/file_metadata/VERSION
+        "sudo apt-get %(yes)s install libimage-exiftool-perl "
+          "libmagickwand-dev libav-tools libzbar-dev" % p,
+        "sudo git clone https://github.com/pywikibot-catfiles/"
+          "file-metadata.git /usr/local/lib/python2.7/dist-packages/"
+          "file-metadata",
+        "sudo pip install -r /usr/local/lib/python2.7/dist-packages/"
+          "file-metadata/test-requirements.txt",
+        "sudo pip install -e /usr/local/lib/python2.7/dist-packages/"
+          "file-metadata/ --upgrade",
+        # end of work-a-round ############################################
         "python -c'import file_metadata; print(file_metadata.__version__)'",
     ]
     run(ctx, job, yes=yes)
@@ -207,8 +220,9 @@ def install_pywikibot(ctx, yes=False):
 def install_file_metadata_bot(ctx, yes=False):
     job = [
 #        "sudo apt-get %(yes)s install libmagickwand-dev" % p,
-        "cd core/ && wget https://raw.githubusercontent.com/pywikibot-catfiles/"
-          "file-metadata/master/file_metadata/wikibot/simple_bot.py",
+        "cd core/ && wget https://raw.githubusercontent.com/"
+          "pywikibot-catfiles/file-metadata/master/file_metadata/"
+          "wikibot/simple_bot.py",
     ]
     run(ctx, job, yes=yes)
 
@@ -236,7 +250,7 @@ def install_docker(ctx, yes=False):
 @task
 def configure_pywikibot(ctx, yes=False):
     job = [
-        #"cd core/ && python pwb.py basic",    # issue: ctx.run stops after this
+        #"cd core/ && python pwb.py basic",  # issue: ctx.run stops after this
         "cd core/ && wget https://raw.githubusercontent.com/drtrigon/"
           "catimages-gsoc/master/user-config.py",
     ]
@@ -283,8 +297,9 @@ def test_script_simple_bot(ctx, yes=False, git=False):
 def test_script_bulk(ctx, yes=False, git=False):
     p = params(yes=yes)
     job = [
-        "cd core/ && wget https://raw.githubusercontent.com/pywikibot-catfiles/"
-          "file-metadata/ajk/work/file_metadata/wikibot/bulk_bot.py",
+        "cd core/ && wget https://raw.githubusercontent.com/"
+          "pywikibot-catfiles/file-metadata/ajk/work/file_metadata/"
+          "wikibot/bulk_bot.py",
     ]
     if git:
         job += [
