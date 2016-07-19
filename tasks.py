@@ -155,8 +155,6 @@ def install_file_metadata(ctx, yes=False):
         "sudo git clone https://github.com/pywikibot-catfiles/"
           "file-metadata.git /usr/local/lib/python2.7/dist-packages/"
           "file-metadata",
-        #"sudo pip install -r /usr/local/lib/python2.7/dist-packages/"
-        #  "file-metadata/test-requirements.txt",
         "sudo pip install /usr/local/lib/python2.7/dist-packages/"
           "file-metadata/ --upgrade",
         # end of work-a-round ############################################
@@ -277,9 +275,6 @@ def test_script(ctx, yes=False, git=False):
     run(ctx, job, yes=yes)
     test_script_simple_bot(ctx, yes=yes, git=git)
     test_script_bulk(ctx, yes=yes, git=git)
-## !!!TODO: should be runned first (see above), but since it has an error and
-##          the other not atm I swapped them temporarily
-#    test_script_simple_bot(ctx, yes=yes, git=git)
 
 
 def test_script_simple_bot(ctx, yes=False, git=False):
@@ -301,12 +296,13 @@ def test_script_bulk(ctx, yes=False, git=False):
         "cd core/ && wget https://raw.githubusercontent.com/"
           "pywikibot-catfiles/file-metadata/ajk/work/file_metadata/"
           "wikibot/bulk_bot.py",
-# hacky login.py replacement:
+# work-a-round hacky login.py replacement: #
         "cd core/ && wget https://raw.githubusercontent.com/drtrigon/"
           "catimages-gsoc/master/pywikibot.lwp.hack",
         "cd core/ && wget https://raw.githubusercontent.com/drtrigon/"
           "catimages-gsoc/master/login-hack.py",
         "cd core/ && python login-hack.py $PYWIKIBOT_TOKEN",
+# end of work-a-round ######################
         "cd core/ && python pwb.py login.py",
         #"cd core/ && python bulk_bot.py "
         #  "-search:'eth-bib' -limit:5 -logname:test -dryrun:1",
@@ -344,7 +340,7 @@ def test_docker(ctx, yes=False):
           "bash -c \"cd /opt/pywikibot-core && python pwb.py "
           "../file-metadata/file_metadata/wikibot/simple_bot.py "
           "-cat:SVG_files -limit:5 && cd /\"" % p,
-# hacky login.py replacement:
+# work-a-round hacky login.py replacement: #
 # !!!ISSUE: make 'login.py -pass:xxx' work or use -oauth token
 # !!!TODO: need a way to run bulk_bot.py w/o needing to enter a passwd,
 #          e.g. like -simulate
@@ -385,6 +381,7 @@ def test_docker(ctx, yes=False):
           "-dir:/opt/pywikibot-core/ || "                 # ignore error
           "cat valgrind.log && ms_print massif.out "
           "|| true\"" % p,                                # ignore error
+# end of work-a-round ######################
     ]
     run(ctx, job, yes=yes)
 
