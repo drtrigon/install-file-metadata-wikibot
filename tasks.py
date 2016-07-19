@@ -155,9 +155,9 @@ def install_file_metadata(ctx, yes=False):
         "sudo git clone https://github.com/pywikibot-catfiles/"
           "file-metadata.git /usr/local/lib/python2.7/dist-packages/"
           "file-metadata",
-        "sudo pip install -r /usr/local/lib/python2.7/dist-packages/"
-          "file-metadata/test-requirements.txt",
-        "sudo pip install -e /usr/local/lib/python2.7/dist-packages/"
+        #"sudo pip install -r /usr/local/lib/python2.7/dist-packages/"
+        #  "file-metadata/test-requirements.txt",
+        "sudo pip install /usr/local/lib/python2.7/dist-packages/"
           "file-metadata/ --upgrade",
         # end of work-a-round ############################################
         "python -c'import file_metadata; print(file_metadata.__version__)'",
