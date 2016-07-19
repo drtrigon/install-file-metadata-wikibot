@@ -312,8 +312,8 @@ def test_script_bulk(ctx, yes=False, git=False):
           "-search:'eth-bib' -limit:5 -logname:test",
         "cd core/; valgrind --tool=massif --massif-out-file=massif.out "
           "python bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -logname:test || true && " # ignore error
-          "ls && ms_print massif.out",
+          "-search:'eth-bib' -limit:5 -logname:test ||true && "  # ignore error
+          "python -V && ls && ms_print massif.out",
         #"cd core/; heaptrack python bulk_bot.py "
         #  "-search:'eth-bib' -limit:5 -logname:test",
     ]
