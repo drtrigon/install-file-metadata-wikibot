@@ -23,6 +23,7 @@
 # * Syntax: pyflake/flake8 (PEP8)
 # * (unittests)
 # * (coverage)
+# -> $ cd file-metadata; python -m pytest --cov
 #
 # Performance Analysis (Time and Memory Profiling):
 # * https://www.huyng.com/posts/python-performance-analysis
@@ -123,9 +124,9 @@ def install_pip(ctx, yes=False):
     p = params(yes=yes)
     job = [
         "sudo apt-get %(yes)s update" % p,
-        "sudo apt-get %(yes)s purge python-pip; "
+        "sudo apt-get %(yes)s purge python-pip && "
           "sudo apt-get %(yes)s autoremove" % p,
-        "wget https://bootstrap.pypa.io/get-pip.py; sudo python get-pip.py",
+        "wget https://bootstrap.pypa.io/get-pip.py && sudo python get-pip.py",
         "pip show pip",
     ]
     run(ctx, job, yes=yes)
@@ -145,7 +146,7 @@ def install_file_metadata_deps_spm(ctx, yes=False):
 def install_file_metadata(ctx, yes=False):
     job = [
         "sudo pip install file-metadata --upgrade",
-        "python -c'import file_metadata; print file_metadata.__version__'",
+        "python -c'import file_metadata; print(file_metadata.__version__)'",
     ]
     run(ctx, job, yes=yes)
 
@@ -179,10 +180,10 @@ def install_file_metadata_git(ctx, yes=False):
         "git clone https://github.com/AbdealiJK/file-metadata.git",
         "sudo apt-get %(yes)s install libzbar-dev" % p,
         "sudo apt-get %(yes)s install libimage-exiftool-perl libav-tools" % p,
-        "cd file-metadata/; sudo pip install . --upgrade",
-        "cd file-metadata/; python -c'import file_metadata; "
-          "print file_metadata.__version__'",
-        "cd core/; ln -s ../file-metadata/file_metadata file_metadata",
+        "cd file-metadata/ && sudo pip install . --upgrade",
+        "cd file-metadata/ && python -c'import file_metadata; "
+          "print(file_metadata.__version__)'",
+        "cd core/ && ln -s ../file-metadata/file_metadata file_metadata",
     ]
     run(ctx, job, yes=yes)
 
@@ -206,7 +207,7 @@ def install_pywikibot(ctx, yes=False):
 def install_file_metadata_bot(ctx, yes=False):
     job = [
 #        "sudo apt-get %(yes)s install libmagickwand-dev" % p,
-        "cd core/; wget https://raw.githubusercontent.com/pywikibot-catfiles/"
+        "cd core/ && wget https://raw.githubusercontent.com/pywikibot-catfiles/"
           "file-metadata/master/file_metadata/wikibot/simple_bot.py",
     ]
     run(ctx, job, yes=yes)
@@ -235,8 +236,8 @@ def install_docker(ctx, yes=False):
 @task
 def configure_pywikibot(ctx, yes=False):
     job = [
-        #"cd core/; python pwb.py basic",    # issue: ctx.run stops after this
-        "cd core/; wget https://raw.githubusercontent.com/drtrigon/"
+        #"cd core/ && python pwb.py basic",    # issue: ctx.run stops after this
+        "cd core/ && wget https://raw.githubusercontent.com/drtrigon/"
           "catimages-gsoc/master/user-config.py",
     ]
     run(ctx, job, yes=yes)
@@ -269,11 +270,11 @@ def test_script(ctx, yes=False, git=False):
 def test_script_simple_bot(ctx, yes=False, git=False):
     if not git:
         job = [
-            "cd core/; python pwb.py simple_bot.py -cat:SVG_files -limit:5",
+            "cd core/ && python pwb.py simple_bot.py -cat:SVG_files -limit:5",
     ]
     else:
         job = [
-            "cd core/; python pwb.py file_metadata/wikibot/simple_bot.py "
+            "cd core/ && python pwb.py file_metadata/wikibot/simple_bot.py "
               "-cat:SVG_files -limit:5",
     ]
     run(ctx, job, yes=yes)
@@ -282,7 +283,7 @@ def test_script_simple_bot(ctx, yes=False, git=False):
 def test_script_bulk(ctx, yes=False, git=False):
     p = params(yes=yes)
     job = [
-        "cd core/; wget https://raw.githubusercontent.com/pywikibot-catfiles/"
+        "cd core/ && wget https://raw.githubusercontent.com/pywikibot-catfiles/"
           "file-metadata/ajk/work/file_metadata/wikibot/bulk_bot.py",
     ]
     if git:
@@ -296,25 +297,26 @@ def test_script_bulk(ctx, yes=False, git=False):
         "cd core/ && python pwb.py login.py",
     ]
     job += [
-        #"cd core/; python bulk_bot.py "
+        #"cd core/ && python bulk_bot.py "
         #  "-search:'eth-bib' -limit:5 -logname:test -dryrun:1",
-        "cd core/; python bulk_bot.py "
+        "cd core/ && python bulk_bot.py "
           "-search:'eth-bib' -limit:5 -logname:test",
         "sudo pip install line_profiler memory_profiler",
         "sudo apt-get %(yes)s install valgrind" % p,
-        "cd core/; python -m cProfile -s time bulk_bot.py "
+        "cd core/ && python -m cProfile -s time bulk_bot.py "
           "-search:'eth-bib' -limit:5 -logname:test > profile.out && "
-          "head profile.out -n 100",
-        "cd core/; kernprof -l -v bulk_bot.py "
+          "head profile.out -n 150",
+        "cd core/ && kernprof -l -v bulk_bot.py "
           "-search:'eth-bib' -limit:5 -logname:test && "
           "python -m line_profiler bulk_bot.py.lprof ",
-        "cd core/; python -m memory_profiler bulk_bot.py "
+        "cd core/ && python -m memory_profiler bulk_bot.py "
           "-search:'eth-bib' -limit:5 -logname:test",
-        "cd core/; valgrind --tool=massif --massif-out-file=massif.out "
-          "python bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -logname:test ||true && "  # ignore error
-          "python -V && ls && ms_print massif.out",
-        #"cd core/; heaptrack python bulk_bot.py "
+        "cd core/ && valgrind --tool=massif --massif-out-file=massif.out "
+          "--log-file=valgrind.log python bulk_bot.py "
+          "-search:'eth-bib' -limit:5 -logname:test || "  # ignore error
+          "cat valgrind.log && ms_print massif.out "
+          "|| true",                                      # ignore error
+        #"cd core/ && heaptrack python bulk_bot.py "
         #  "-search:'eth-bib' -limit:5 -logname:test",
     ]
     run(ctx, job, yes=yes)
@@ -355,6 +357,23 @@ def test_docker(ctx, yes=False):
 #          "python pwb.py /bulk_bot.py "
 #          "-search:'eth-bib' -limit:5 -logname:test "
 #          "-dir:/opt/pywikibot-core/\"" % p,
+        "sudo docker run %(travis)s drtrigon/catimages-gsoc "
+          "bash -c \"cd /opt/pywikibot-core && "
+          "python login-hack.py $PYWIKIBOT_TOKEN && "
+          "cd / && python -m cProfile -s time bulk_bot.py "
+          "-search:'eth-bib' -limit:5 -logname:test "
+          "-dir:/opt/pywikibot-core/ > profile.out && "
+          "head profile.out -n 150\"" % p,
+        "sudo docker run %(travis)s drtrigon/catimages-gsoc "
+          "bash -c \"cd /opt/pywikibot-core && "
+          "python login-hack.py $PYWIKIBOT_TOKEN && "
+          "cd / && sudo apt-get %(yes)s install valgrind && "
+          "valgrind --tool=massif --massif-out-file=massif.out "
+          "--log-file=valgrind.log python bulk_bot.py "
+          "-search:'eth-bib' -limit:5 -logname:test "
+          "-dir:/opt/pywikibot-core/ || "                 # ignore error
+          "cat valgrind.log && ms_print massif.out "
+          "|| true\"" % p,                                # ignore error
     ]
     run(ctx, job, yes=yes)
 
