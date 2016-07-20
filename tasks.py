@@ -378,9 +378,8 @@ def test_docker(ctx, yes=False):
           "valgrind --tool=massif --massif-out-file=massif.out "
           "--log-file=valgrind.log python bulk_bot.py "
           "-search:'eth-bib' -limit:5 -logname:test "
-          "-dir:/opt/pywikibot-core/ || "                 # ignore error
-          "cat valgrind.log && ms_print massif.out "
-          "|| true\"" % p,                                # ignore error
+          "-dir:/opt/pywikibot-core/ && "
+          "cat valgrind.log && ms_print massif.out\"" % p,
 # end of work-a-round ######################
     ]
     run(ctx, job, yes=yes)
