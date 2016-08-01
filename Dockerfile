@@ -32,8 +32,9 @@ RUN apt-get -y install libmagickwand-dev
 # Setup of bulk.py
 RUN apt-get install python-opencv
 RUN pip install retry httplib2 --upgrade
-RUN wget https://raw.githubusercontent.com/pywikibot-catfiles/file-metadata/master/file_metadata/wikibot/bulk_bot.py
-#ADD https://raw.githubusercontent.com/pywikibot-catfiles/file-metadata/master/file_metadata/wikibot/bulk_bot.py
+#RUN wget https://raw.githubusercontent.com/AbdealiJK/file-metadata/95cc2abb3506608266b1faf0da0722433ad6b03b/tests/bulk.py
+#RUN wget https://raw.githubusercontent.com/pywikibot-catfiles/file-metadata/ajk/work/file_metadata/wikibot/bulk_bot.py
+ADD https://raw.githubusercontent.com/pywikibot-catfiles/file-metadata/ajk/work/file_metadata/wikibot/bulk_bot.py .
 
 ##################### INSTALLATION END #####################
 
