@@ -307,24 +307,24 @@ def test_script_bulk(ctx, yes=False, git=False):
         #"cd core/ && python bulk_bot.py "
         #  "-search:'eth-bib' -limit:5 -logname:test -dryrun:1",
         "cd core/ && python bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -logname:test",
+          "-search:'eth-bib' -limit:5 -dry",
         "sudo pip install line_profiler memory_profiler",
         "sudo apt-get %(yes)s install valgrind" % p,
         "cd core/ && python -m cProfile -s time bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -logname:test > profile.out && "
+          "-search:'eth-bib' -limit:5 -dry > profile.out && "
           "head profile.out -n 150",
         "cd core/ && kernprof -l -v bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -logname:test && "
+          "-search:'eth-bib' -limit:5 -dry && "
           "python -m line_profiler bulk_bot.py.lprof ",
         "cd core/ && python -m memory_profiler bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -logname:test",
+          "-search:'eth-bib' -limit:5 -dry",
         "cd core/ && valgrind --tool=massif --massif-out-file=massif.out "
           "--log-file=valgrind.log python bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -logname:test || "  # ignore error
+          "-search:'eth-bib' -limit:5 -dry || "  # ignore error
           "cat valgrind.log && ms_print massif.out "
           "|| true",                                      # ignore error
         #"cd core/ && heaptrack python bulk_bot.py "
-        #  "-search:'eth-bib' -limit:5 -logname:test",
+        #  "-search:'eth-bib' -limit:5 -dry",
     ]
     run(ctx, job, yes=yes)
 
@@ -357,18 +357,18 @@ def test_docker(ctx, yes=False):
           "bash -c \"cd /opt/pywikibot-core && "
           "python login-hack.py $PYWIKIBOT_TOKEN && "
           "cd / && python bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -logname:test "
+          "-search:'eth-bib' -limit:5 -dry "
           "-dir:/opt/pywikibot-core/\"" % p,
 #        "sudo docker run %(travis)s drtrigon/catimages-gsoc "
 #          "bash -c \"cd /opt/pywikibot-core && "
 #          "python pwb.py /bulk_bot.py "
-#          "-search:'eth-bib' -limit:5 -logname:test "
+#          "-search:'eth-bib' -limit:5 -dry "
 #          "-dir:/opt/pywikibot-core/\"" % p,
         "sudo docker run %(travis)s drtrigon/catimages-gsoc "
           "bash -c \"cd /opt/pywikibot-core && "
           "python login-hack.py $PYWIKIBOT_TOKEN && "
           "cd / && python -m cProfile -s time bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -logname:test "
+          "-search:'eth-bib' -limit:5 -dry "
           "-dir:/opt/pywikibot-core/ > profile.out && "
           "head profile.out -n 150\"" % p,
         "sudo docker run %(travis)s drtrigon/catimages-gsoc "
@@ -377,7 +377,7 @@ def test_docker(ctx, yes=False):
           "cd / && sudo apt-get %(yes)s install valgrind && "
           "valgrind --tool=massif --massif-out-file=massif.out "
           "--log-file=valgrind.log python bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -logname:test "
+          "-search:'eth-bib' -limit:5 -dry "
           "-dir:/opt/pywikibot-core/ && "
           "cat valgrind.log && ms_print massif.out\"" % p,
 # end of work-a-round ######################
