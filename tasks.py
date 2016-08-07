@@ -20,7 +20,6 @@
 # * Syntax: pyflake/flake8 (PEP8)
 # * (unittests)
 # * (coverage)
-# -> $ cd file-metadata; python -m pytest --cov
 #
 # Performance Analysis (Time and Memory Profiling):
 # * https://www.huyng.com/posts/python-performance-analysis
@@ -252,12 +251,6 @@ def test_script(ctx, yes=False, git=False):
         #  "python generate_user_files.py",
         #"wikibot-create-config",
 # work-a-round hacky login.py replacement: #
-#        "wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/"
-#          "master/user-config.py",
-#        "wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/"
-#          "master/pywikibot.lwp.hack",
-#        "wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/"
-#          "master/login-hack.py",
         "python login-hack.py $PYWIKIBOT_TOKEN",
 # end of work-a-round ######################
         ## check login state
