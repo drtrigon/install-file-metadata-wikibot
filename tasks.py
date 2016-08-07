@@ -250,21 +250,21 @@ def test_script(ctx, yes=False, git=False):
         #"cd core/ && python pwb.py basic",  # issue: ctx.run stops after this
         #"cd file-metadata/file_metadata/wikibot/ && \"
         #  "python generate_user_files.py",
-#        "wikibot-create-config",
+        #"wikibot-create-config",
 # work-a-round hacky login.py replacement: #
-        "wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/"
-          "master/user-config.py",
-        "wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/"
-          "master/pywikibot.lwp.hack",
-        "wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/"
-          "master/login-hack.py",
+#        "wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/"
+#          "master/user-config.py",
+#        "wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/"
+#          "master/pywikibot.lwp.hack",
+#        "wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/"
+#          "master/login-hack.py",
         "python login-hack.py $PYWIKIBOT_TOKEN",
 # end of work-a-round ######################
-        "python pwb.py login.py || true",  # (somehow expected to fail)
-# download ^^^ from pywikibot scripts directory?
+        ## check login state
+        #"wget https://raw.githubusercontent.com/.../scripts/login.py",
+        #"python pwb.py login.py",
         # run bot tests
         "wikibot-filemeta-log -search:'eth-bib' -limit:5 -dry || true",
-
         "sudo pip install line_profiler memory_profiler",
         "sudo apt-get %(yes)s install valgrind" % p,
         "python -m cProfile -s time /usr/local/bin/wikibot-filemeta-log "
@@ -274,15 +274,14 @@ def test_script(ctx, yes=False, git=False):
           "-search:'eth-bib' -limit:5 -dry && "
           "python -m line_profiler wikibot-filemeta-log.lprof ",
         "python -m memory_profiler wikibot-filemeta-log "
-          "-search:'eth-bib' -limit:5 -dry || true",
+          "-search:'eth-bib' -limit:5 -dry || true",      # ignore error
         "valgrind --tool=massif --massif-out-file=massif.out "
           "--log-file=valgrind.log wikibot-filemeta-log "
-          "-search:'eth-bib' -limit:5 -dry || "  # ignore error
+          "-search:'eth-bib' -limit:5 -dry || "           # ignore error
           "cat valgrind.log && ms_print massif.out "
           "|| true",                                      # ignore error
-        #"cd core/ && heaptrack python wikibot-filemeta-log "
+        #"heaptrack python wikibot-filemeta-log "
         #  "-search:'eth-bib' -limit:5 -dry",
-
         "wikibot-filemeta-simple -cat:SVG_files -limit:5",
     ]
     run(ctx, job, yes=yes)
