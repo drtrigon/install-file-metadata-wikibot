@@ -64,6 +64,9 @@ logging.basicConfig(
 )
 cmdno = 0
 
+#TRAVIS = os.environ.get('CI', False) or \
+#         os.environ.get('TRAVIS', False)
+
 
 # Install procedure
 def run(ctx, job, yes=False):
@@ -72,7 +75,8 @@ def run(ctx, job, yes=False):
         print("\n" + ("--- " * 18))
         lvl = 0
         for item in inspect.stack()[1:][::-1]:
-            if 'catimages-gsoc/tasks.py' not in item[1]:
+#            if 'catimages-gsoc/tasks.py' not in item[1]:
+            if '/tasks.py' not in item[1]:
                 continue
             lvl += 1
             logging.info("%s> %s:%s" % (("-" * lvl), item[3], item[2]))
@@ -124,6 +128,8 @@ def install_file_metadata_spm(ctx, yes=False):
           "python-numpy python-scipy python-matplotlib python-wand "
           "python-skimage python-zbar cmake libboost-python-dev "
           "liblzma-dev libjpeg-dev libz-dev" % p,
+        # install additional dependencies for pip build
+        "sudo apt-get %(yes)s install libzbar-dev" % p,
         "sudo apt-get %(yes)s install libimage-exiftool-perl libav-tools" % p,
         # install file-metadata through pip only
         "sudo pip install file-metadata --upgrade",
@@ -148,6 +154,7 @@ def install_file_metadata_pip(ctx, yes=False):
           "pkg-config libfreetype6-dev libpng12-dev liblapack-dev "
           "libblas-dev gfortran cmake libboost-python-dev liblzma-dev "
           "libjpeg-dev python-virtualenv" % p,
+        # install additional dependencies for pip build
         "sudo apt-get %(yes)s install libzbar-dev" % p,
         "sudo apt-get %(yes)s install libimage-exiftool-perl libav-tools" % p,
         # install file-metadata through pip only
@@ -175,6 +182,7 @@ def install_file_metadata_git(ctx, yes=False):
           "pkg-config libfreetype6-dev libpng12-dev liblapack-dev "
           "libblas-dev gfortran cmake libboost-python-dev liblzma-dev "
           "libjpeg-dev python-virtualenv" % p,
+        # install additional dependencies for pip build
         "sudo apt-get %(yes)s install libzbar-dev" % p,
         "sudo apt-get %(yes)s install libimage-exiftool-perl libav-tools" % p,
         # install file-metadata through git+pip
@@ -185,7 +193,8 @@ def install_file_metadata_git(ctx, yes=False):
         "python -c'import file_metadata; print(file_metadata.__version__)'",
         # unit-test of file-metadata
         "sudo pip install -r ./file-metadata/test-requirements.txt",
-        "sudo apt-get %(yes)s install python-opencv" % p,  # (opencv-data ?)
+#        "sudo apt-get %(yes)s install python-opencv" % p,  # (opencv-data ?)
+        "sudo apt-get %(yes)s install python-opencv opencv-data" % p,
         "cd file-metadata/ && python -m pytest --cov",
     ]
     run(ctx, job, yes=yes)
@@ -248,6 +257,7 @@ def test_script(ctx, yes=False, git=False):
         "python login-hack.py $PYWIKIBOT_TOKEN",
 # end of work-a-round ######################
         "python pwb.py login.py || true",  # (somehow expected to fail)
+# download ^^^ from pywikibot scripts directory?
         # run bot tests
         "wikibot-filemeta-log -search:'eth-bib' -limit:5 -logname:test -dry",
 
