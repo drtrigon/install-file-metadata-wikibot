@@ -124,6 +124,7 @@ def install_file_metadata_spm(ctx, yes=False):
           "python-numpy python-scipy python-matplotlib python-wand "
           "python-skimage python-zbar cmake libboost-python-dev "
           "liblzma-dev libjpeg-dev libz-dev" % p,
+        "sudo apt-get %(yes)s install libimage-exiftool-perl libav-tools" % p,
         # install file-metadata through pip only
         "sudo pip install file-metadata --upgrade",
         # test import of file-metadata
@@ -147,6 +148,8 @@ def install_file_metadata_pip(ctx, yes=False):
           "pkg-config libfreetype6-dev libpng12-dev liblapack-dev "
           "libblas-dev gfortran cmake libboost-python-dev liblzma-dev "
           "libjpeg-dev python-virtualenv" % p,
+        "sudo apt-get %(yes)s install libzbar-dev" % p,
+        "sudo apt-get %(yes)s install libimage-exiftool-perl libav-tools" % p,
         # install file-metadata through pip only
         "sudo pip install file-metadata --upgrade",
         # test import of file-metadata
@@ -182,6 +185,7 @@ def install_file_metadata_git(ctx, yes=False):
         "python -c'import file_metadata; print(file_metadata.__version__)'",
         # unit-test of file-metadata
         "sudo pip install -r ./file-metadata/test-requirements.txt",
+        "sudo apt-get %(yes)s install python-opencv" % p,  # (opencv-data ?)
         "cd file-metadata/ && python -m pytest --cov",
     ]
     run(ctx, job, yes=yes)
@@ -221,7 +225,6 @@ def install_docker(ctx, yes=False):
         #"sudo service docker start" % p,
     ]
     run(ctx, job, yes=yes)
-    configure_docker(ctx, yes=yes)
 
 
 # Test of pywikibot-catfiles scripts (and file-metadata) including analysis
