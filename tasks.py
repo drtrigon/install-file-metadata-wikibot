@@ -288,5 +288,6 @@ def test_this(ctx, yes=False):
         "sudo apt-get %(yes)s install python-flake8" % p,
         #"flake8 tasks.py login-hack.py",
         "flake8 --ignore=E121,E122,E128 tasks.py login-hack.py",
+        "invoke --list",
     ]
     run(ctx, job, yes=yes)
