@@ -7,13 +7,10 @@
 # https://commons.wikimedia.org/wiki/User:DrTrigon/file-metadata
 #
 # Usage:
-# $ invoke install_file_metadata_spm install_pywikibot \
-#     install_file_metadata_bot
-# $ invoke install_file_metadata_pip install_pywikibot \
-#     install_file_metadata_bot
-# $ invoke install_pywikibot install_file_metadata_git \
-#     (install_file_metadata_bot)
-# $ invoke install_pywikibot --yes install_file_metadata_git --yes
+# $ invoke install_file_metadata_spm install_pywikibot
+# $ invoke install_file_metadata_pip install_pywikibot
+# $ invoke install_file_metadata_git install_pywikibot
+# $ invoke install_file_metadata_git --yes install_pywikibot --yes
 # $ invoke install_docker --yes
 #
 # Inspired by https://github.com/pypa/get-pip/blob/master/get-pip.py
@@ -115,49 +112,21 @@ def disabled(func):
 # Test through system package management
 @task
 def install_file_metadata_spm(ctx, yes=False):
-    install_pip(ctx, yes=yes)
-    install_file_metadata_deps_spm(ctx, yes=yes)
-    install_file_metadata(ctx, yes=yes)
-
-
-def install_pip(ctx, yes=False):
     p = params(yes=yes)
     job = [
         "sudo apt-get %(yes)s update" % p,
-        "sudo apt-get %(yes)s purge python-pip && "
-          "sudo apt-get %(yes)s autoremove" % p,
-        "wget https://bootstrap.pypa.io/get-pip.py && sudo python get-pip.py",
+        # install most recent pip
+        # assume pip to be already installed
+        "sudo pip install -U pip",
         "pip show pip",
-    ]
-    run(ctx, job, yes=yes)
-
-
-def install_file_metadata_deps_spm(ctx, yes=False):
-    p = params(yes=yes)
-    job = [
+        # install spm setup dependencies
         "sudo apt-get %(yes)s install python-appdirs python-magic "
           "python-numpy python-scipy python-matplotlib python-wand "
           "python-skimage python-zbar cmake libboost-python-dev "
           "liblzma-dev libjpeg-dev libz-dev" % p,
-    ]
-    run(ctx, job, yes=yes)
-
-
-def install_file_metadata(ctx, yes=False):
-    p = params(yes=yes)
-    job = [
-        #"sudo pip install file-metadata --upgrade",
-        # work-a-round since above commands only installs 0.1.0 not dev! #
-        # file-metadata-0.1.0 was installed as:
-        # /usr/local/lib/python2.7/dist-packages/file_metadata/VERSION
-        "sudo apt-get %(yes)s install libimage-exiftool-perl "
-          "libmagickwand-dev libav-tools libzbar-dev" % p,
-        "sudo git clone https://github.com/pywikibot-catfiles/"
-          "file-metadata.git /usr/local/lib/python2.7/dist-packages/"
-          "file-metadata",
-        "sudo pip install /usr/local/lib/python2.7/dist-packages/"
-          "file-metadata/ --upgrade",
-        # end of work-a-round ############################################
+        # install file-metadata through pip only
+        "sudo pip install file-metadata --upgrade",
+        # test import of file-metadata
         "python -c'import file_metadata; print(file_metadata.__version__)'",
     ]
     run(ctx, job, yes=yes)
@@ -166,18 +135,22 @@ def install_file_metadata(ctx, yes=False):
 # Test through pip
 @task
 def install_file_metadata_pip(ctx, yes=False):
-    install_pip(ctx, yes=yes)
-    install_file_metadata_deps_pip(ctx, yes=yes)
-    install_file_metadata(ctx, yes=yes)
-
-
-def install_file_metadata_deps_pip(ctx, yes=False):
     p = params(yes=yes)
     job = [
+        "sudo apt-get %(yes)s update" % p,
+        # install most recent pip
+        # assume pip to be already installed
+        "sudo pip install -U pip",
+        "pip show pip",
+        # install pip setup dependencies
         "sudo apt-get %(yes)s install perl openjdk-7-jre python-dev "
           "pkg-config libfreetype6-dev libpng12-dev liblapack-dev "
           "libblas-dev gfortran cmake libboost-python-dev liblzma-dev "
           "libjpeg-dev python-virtualenv" % p,
+        # install file-metadata through pip only
+        "sudo pip install file-metadata --upgrade",
+        # test import of file-metadata
+        "python -c'import file_metadata; print(file_metadata.__version__)'",
     ]
     run(ctx, job, yes=yes)
 
@@ -185,17 +158,31 @@ def install_file_metadata_deps_pip(ctx, yes=False):
 # Test through github
 @task
 def install_file_metadata_git(ctx, yes=False):
-    install_pip(ctx, yes=yes)
-    install_file_metadata_deps_pip(ctx, yes=yes)
     p = params(yes=yes)
     job = [
-        "git clone https://github.com/AbdealiJK/file-metadata.git",
+        "sudo apt-get %(yes)s update" % p,
+        # install most recent pip
+        # assume pip to be already installed
+        "sudo pip install -U pip",
+        "pip show pip",
+        # install git
+        "sudo apt-get %(yes)s install git git-review" % p,
+        # install git setup dependencies
+        "sudo apt-get %(yes)s install perl openjdk-7-jre python-dev "
+          "pkg-config libfreetype6-dev libpng12-dev liblapack-dev "
+          "libblas-dev gfortran cmake libboost-python-dev liblzma-dev "
+          "libjpeg-dev python-virtualenv" % p,
         "sudo apt-get %(yes)s install libzbar-dev" % p,
         "sudo apt-get %(yes)s install libimage-exiftool-perl libav-tools" % p,
-        "cd file-metadata/ && sudo pip install . --upgrade",
-        "cd file-metadata/ && python -c'import file_metadata; "
-          "print(file_metadata.__version__)'",
-        "cd core/ && ln -s ../file-metadata/file_metadata file_metadata",
+        # install file-metadata through git+pip
+        "git clone https://github.com/pywikibot-catfiles/file-metadata.git",
+        "sudo pip install ./file-metadata --upgrade",
+        "sudo pip install -e ./file-metadata",
+        # test import of file-metadata
+        "python -c'import file_metadata; print(file_metadata.__version__)'",
+        # unit-test of file-metadata
+        "sudo pip install -r ./file-metadata/test-requirements.txt",
+        "cd file-metadata/ && python -m pytest --cov",
     ]
     run(ctx, job, yes=yes)
 
@@ -205,23 +192,15 @@ def install_file_metadata_git(ctx, yes=False):
 def install_pywikibot(ctx, yes=False):
     p = params(yes=yes)
     job = [
-        "sudo apt-get %(yes)s update" % p,
+        # install git
         "sudo apt-get %(yes)s install git git-review" % p,
-        "git clone --branch 2.0 --recursive "
-          "https://gerrit.wikimedia.org/r/pywikibot/core.git",
-    ]
-    run(ctx, job, yes=yes)
-    configure_pywikibot(ctx, yes=yes)
-
-
-# Test bot script
-@task
-def install_file_metadata_bot(ctx, yes=False):
-    job = [
-#        "sudo apt-get %(yes)s install libmagickwand-dev" % p,
-        "cd core/ && wget https://raw.githubusercontent.com/"
-          "pywikibot-catfiles/file-metadata/master/file_metadata/"
-          "wikibot/simple_bot.py",
+        # install pywikibot
+        #"git clone --branch 2.0 --recursive "
+        #  "https://gerrit.wikimedia.org/r/pywikibot/core.git",
+        "wikibot-filemeta-log || true",
+        "sudo pip install "
+          "git+https://gerrit.wikimedia.org/r/pywikibot/core.git\#egg="
+          "pywikibot",
     ]
     run(ctx, job, yes=yes)
 
@@ -245,142 +224,53 @@ def install_docker(ctx, yes=False):
     configure_docker(ctx, yes=yes)
 
 
-# Configuration of pywikibot
-@task
-def configure_pywikibot(ctx, yes=False):
-    job = [
-        #"cd core/ && python pwb.py basic",  # issue: ctx.run stops after this
-        "cd core/ && wget https://raw.githubusercontent.com/drtrigon/"
-          "catimages-gsoc/master/user-config.py",
-    ]
-    run(ctx, job, yes=yes)
-
-
-# Configuration of docker for running tests
-@task
-def configure_docker(ctx, yes=False):
-    job = [
-        "sudo docker pull drtrigon/catimages-gsoc",
-    ]
-    run(ctx, job, yes=yes)
-
-
 # Test of pywikibot-catfiles scripts (and file-metadata) including analysis
 @task
 def test_script(ctx, yes=False, git=False):
     p = params(yes=yes)
     job = [
-        "sudo apt-get %(yes)s install python-opencv" % p,
-    ]
-    run(ctx, job, yes=yes)
-    test_script_simple_bot(ctx, yes=yes, git=git)
-    test_script_bulk(ctx, yes=yes, git=git)
-
-
-def test_script_simple_bot(ctx, yes=False, git=False):
-    if not git:
-        job = [
-            "cd core/ && python pwb.py simple_bot.py -cat:SVG_files -limit:5",
-    ]
-    else:
-        job = [
-            "cd core/ && python pwb.py file_metadata/wikibot/simple_bot.py "
-              "-cat:SVG_files -limit:5",
-    ]
-    run(ctx, job, yes=yes)
-
-
-def test_script_bulk(ctx, yes=False, git=False):
-    p = params(yes=yes)
-    job = [
-        "cd core/ && wget https://raw.githubusercontent.com/"
-          "pywikibot-catfiles/file-metadata/ajk/work/file_metadata/"
-          "wikibot/bulk_bot.py",
+        "sudo apt-get %(yes)s install python-opencv" % p,  # (opencv-data ?)
+        # configuration of pywikibot
+        #"cd core/ && python pwb.py basic",  # issue: ctx.run stops after this
+        #"cd file-metadata/file_metadata/wikibot/ && \"
+        #  "python generate_user_files.py",
+#        "wikibot-create-config",
 # work-a-round hacky login.py replacement: #
-        "cd core/ && wget https://raw.githubusercontent.com/drtrigon/"
-          "catimages-gsoc/master/pywikibot.lwp.hack",
-        "cd core/ && wget https://raw.githubusercontent.com/drtrigon/"
-          "catimages-gsoc/master/login-hack.py",
-        "cd core/ && python login-hack.py $PYWIKIBOT_TOKEN",
+        "wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/"
+          "master/user-config.py",
+        "wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/"
+          "master/pywikibot.lwp.hack",
+        "wget https://raw.githubusercontent.com/drtrigon/catimages-gsoc/"
+          "master/login-hack.py",
+        "python login-hack.py $PYWIKIBOT_TOKEN",
 # end of work-a-round ######################
-        "cd core/ && python pwb.py login.py",
+        "python pwb.py login.py || true",  # (somehow expected to fail)
+        # run bot tests
+        "wikibot-filemeta-log -search:'eth-bib' -limit:5 -logname:test -dry",
+
         #"cd core/ && python bulk_bot.py "
         #  "-search:'eth-bib' -limit:5 -logname:test -dryrun:1",
-        "cd core/ && python bulk_bot.py "
+        "wikibot-filemeta-log "
           "-search:'eth-bib' -limit:5 -dry",
         "sudo pip install line_profiler memory_profiler",
         "sudo apt-get %(yes)s install valgrind" % p,
-        "cd core/ && python -m cProfile -s time bulk_bot.py "
+        "python -m cProfile -s time wikibot-filemeta-log "
           "-search:'eth-bib' -limit:5 -dry > profile.out && "
           "head profile.out -n 150",
-        "cd core/ && kernprof -l -v bulk_bot.py "
+        "kernprof -l -v wikibot-filemeta-log "
           "-search:'eth-bib' -limit:5 -dry && "
-          "python -m line_profiler bulk_bot.py.lprof ",
-        "cd core/ && python -m memory_profiler bulk_bot.py "
+          "python -m line_profiler wikibot-filemeta-log.lprof ",
+        "python -m memory_profiler wikibot-filemeta-log "
           "-search:'eth-bib' -limit:5 -dry",
-        "cd core/ && valgrind --tool=massif --massif-out-file=massif.out "
-          "--log-file=valgrind.log python bulk_bot.py "
+        "valgrind --tool=massif --massif-out-file=massif.out "
+          "--log-file=valgrind.log wikibot-filemeta-log "
           "-search:'eth-bib' -limit:5 -dry || "  # ignore error
           "cat valgrind.log && ms_print massif.out "
           "|| true",                                      # ignore error
-        #"cd core/ && heaptrack python bulk_bot.py "
+        #"cd core/ && heaptrack python wikibot-filemeta-log "
         #  "-search:'eth-bib' -limit:5 -dry",
-    ]
-    run(ctx, job, yes=yes)
 
-
-# Test of docker image contained scripts
-@task
-def test_docker(ctx, yes=False):
-    p = params(yes=yes)
-#    p['travis'] = '-i' if travis else '-it'
-    p['travis'] = '-i'  # use -i instead of -it due to tty
-    job = [
-        "sudo docker run %(travis)s drtrigon/catimages-gsoc "
-          "bash -c \"cd /opt/pywikibot-core && python pwb.py "
-          "../file-metadata/file_metadata/wikibot/simple_bot.py "
-          "-cat:SVG_files -limit:5 && cd /\"" % p,
-# work-a-round hacky login.py replacement: #
-# !!!ISSUE: make 'login.py -pass:xxx' work or use -oauth token
-# !!!TODO: need a way to run bulk_bot.py w/o needing to enter a passwd,
-#          e.g. like -simulate
-        #"sudo docker run %(travis)s drtrigon/catimages-gsoc "
-        #  "bash -c \"python bulk.py -search:'eth-bib' "
-        #  "-limit:5 -logname:test -dryrun:1 "
-        #  "-dir:/opt/pywikibot-core/\"" % p,
-        "sudo docker run %(travis)s drtrigon/catimages-gsoc "
-          "bash -c \"cd /opt/pywikibot-core && "
-          "python login-hack.py $PYWIKIBOT_TOKEN && "
-          "cd /opt/pywikibot-core && "
-          "python pwb.py login.py\"" % p,  # check login
-        "sudo docker run %(travis)s drtrigon/catimages-gsoc "
-          "bash -c \"cd /opt/pywikibot-core && "
-          "python login-hack.py $PYWIKIBOT_TOKEN && "
-          "cd / && python bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -dry "
-          "-dir:/opt/pywikibot-core/\"" % p,
-#        "sudo docker run %(travis)s drtrigon/catimages-gsoc "
-#          "bash -c \"cd /opt/pywikibot-core && "
-#          "python pwb.py /bulk_bot.py "
-#          "-search:'eth-bib' -limit:5 -dry "
-#          "-dir:/opt/pywikibot-core/\"" % p,
-        "sudo docker run %(travis)s drtrigon/catimages-gsoc "
-          "bash -c \"cd /opt/pywikibot-core && "
-          "python login-hack.py $PYWIKIBOT_TOKEN && "
-          "cd / && python -m cProfile -s time bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -dry "
-          "-dir:/opt/pywikibot-core/ > profile.out && "
-          "head profile.out -n 150\"" % p,
-        "sudo docker run %(travis)s drtrigon/catimages-gsoc "
-          "bash -c \"cd /opt/pywikibot-core && "
-          "python login-hack.py $PYWIKIBOT_TOKEN && "
-          "cd / && sudo apt-get %(yes)s install valgrind && "
-          "valgrind --tool=massif --massif-out-file=massif.out "
-          "--log-file=valgrind.log python bulk_bot.py "
-          "-search:'eth-bib' -limit:5 -dry "
-          "-dir:/opt/pywikibot-core/ && "
-          "cat valgrind.log && ms_print massif.out\"" % p,
-# end of work-a-round ######################
+        "wikibot-filemeta-simple -cat:SVG_files -limit:5",
     ]
     run(ctx, job, yes=yes)
 
