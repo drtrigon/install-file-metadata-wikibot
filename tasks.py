@@ -75,7 +75,6 @@ def run(ctx, job, yes=False):
         print("\n" + ("--- " * 18))
         lvl = 0
         for item in inspect.stack()[1:][::-1]:
-#            if 'catimages-gsoc/tasks.py' not in item[1]:
             if ('/tasks.py' not in item[1]) or ('__call__' in item[3]):
                 continue
             lvl += 1
@@ -275,7 +274,7 @@ def test_script(ctx, yes=False, git=False):
           "-search:'eth-bib' -limit:5 -dry && "
           "python -m line_profiler wikibot-filemeta-log.lprof ",
         "python -m memory_profiler wikibot-filemeta-log "
-          "-search:'eth-bib' -limit:5 -dry",
+          "-search:'eth-bib' -limit:5 -dry || true",
         "valgrind --tool=massif --massif-out-file=massif.out "
           "--log-file=valgrind.log wikibot-filemeta-log "
           "-search:'eth-bib' -limit:5 -dry || "  # ignore error
