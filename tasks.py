@@ -76,7 +76,7 @@ def run(ctx, job, yes=False):
         lvl = 0
         for item in inspect.stack()[1:][::-1]:
 #            if 'catimages-gsoc/tasks.py' not in item[1]:
-            if '/tasks.py' not in item[1]:
+            if ('/tasks.py' not in item[1]) or ('__call__' in item[3]):
                 continue
             lvl += 1
             logging.info("%s> %s:%s" % (("-" * lvl), item[3], item[2]))
@@ -191,10 +191,10 @@ def install_file_metadata_git(ctx, yes=False):
         "sudo pip install -e ./file-metadata",
         # test import of file-metadata
         "python -c'import file_metadata; print(file_metadata.__version__)'",
+        # install optional dependency OpenCV
+        "sudo apt-get %(yes)s install python-opencv opencv-data" % p,
         # unit-test of file-metadata
         "sudo pip install -r ./file-metadata/test-requirements.txt",
-#        "sudo apt-get %(yes)s install python-opencv" % p,  # (opencv-data ?)
-        "sudo apt-get %(yes)s install python-opencv opencv-data" % p,
         "cd file-metadata/ && python -m pytest --cov",
     ]
     run(ctx, job, yes=yes)
@@ -241,10 +241,11 @@ def install_docker(ctx, yes=False):
 def test_script(ctx, yes=False, git=False):
     p = params(yes=yes)
     job = [
+        # check wikibot scripts
+        "type wikibot-create-config",
         "type wikibot-filemeta-log",
         "type wikibot-filemeta-simple",
-
-#        "sudo apt-get %(yes)s install python-opencv" % p,  # (opencv-data ?)
+        # install optional dependency OpenCV
         "sudo apt-get %(yes)s install python-opencv opencv-data" % p,
         # configuration of pywikibot
         #"cd core/ && python pwb.py basic",  # issue: ctx.run stops after this
@@ -263,16 +264,11 @@ def test_script(ctx, yes=False, git=False):
         "python pwb.py login.py || true",  # (somehow expected to fail)
 # download ^^^ from pywikibot scripts directory?
         # run bot tests
-        "wikibot-filemeta-log -search:'eth-bib' -limit:5 -logname:test "
-          "-dry || true",
+        "wikibot-filemeta-log -search:'eth-bib' -limit:5 -dry || true",
 
-        #"cd core/ && python bulk_bot.py "
-        #  "-search:'eth-bib' -limit:5 -logname:test -dryrun:1",
-        "wikibot-filemeta-log "
-          "-search:'eth-bib' -limit:5 -dry",
         "sudo pip install line_profiler memory_profiler",
         "sudo apt-get %(yes)s install valgrind" % p,
-        "python -m cProfile -s time wikibot-filemeta-log "
+        "python -m cProfile -s time /usr/local/bin/wikibot-filemeta-log "
           "-search:'eth-bib' -limit:5 -dry > profile.out && "
           "head profile.out -n 150",
         "kernprof -l -v wikibot-filemeta-log "
