@@ -1,20 +1,11 @@
 Introduction
 ============
 
-``file-metadata`` is a python package that aims to analyze files and find
-metadata that can be used from it.
+``file-metadata-wikibot`` is a python package that aims to analyze files and find
+metadata that can be used from it on Wikipedia Commons by using pywikibot.
 
-For more information on the package visit `pywikibot-catfiles/file-metadata
-<https://github.com/pywikibot-catfiles/file-metadata>`__.
-
-Development
-===========
-
-Build status
-------------
-
-.. image:: https://travis-ci.org/drtrigon/install-file-metadata-wikibot.svg?branch=master
-   :target: https://travis-ci.org/drtrigon/install-file-metadata-wikibot
+For more information on the package visit `drtrigon/file-metadata-wikibot
+<https://github.com/drtrigon/file-metadata-wikibot>`__.
 
 Credits
 -------
