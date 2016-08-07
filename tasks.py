@@ -241,7 +241,11 @@ def install_docker(ctx, yes=False):
 def test_script(ctx, yes=False, git=False):
     p = params(yes=yes)
     job = [
-        "sudo apt-get %(yes)s install python-opencv" % p,  # (opencv-data ?)
+        "type wikibot-filemeta-log",
+        "type wikibot-filemeta-simple",
+
+#        "sudo apt-get %(yes)s install python-opencv" % p,  # (opencv-data ?)
+        "sudo apt-get %(yes)s install python-opencv opencv-data" % p,
         # configuration of pywikibot
         #"cd core/ && python pwb.py basic",  # issue: ctx.run stops after this
         #"cd file-metadata/file_metadata/wikibot/ && \"
@@ -259,7 +263,8 @@ def test_script(ctx, yes=False, git=False):
         "python pwb.py login.py || true",  # (somehow expected to fail)
 # download ^^^ from pywikibot scripts directory?
         # run bot tests
-        "wikibot-filemeta-log -search:'eth-bib' -limit:5 -logname:test -dry",
+        "wikibot-filemeta-log -search:'eth-bib' -limit:5 -logname:test "
+          "-dry || true",
 
         #"cd core/ && python bulk_bot.py "
         #  "-search:'eth-bib' -limit:5 -logname:test -dryrun:1",
