@@ -77,7 +77,8 @@ def run(ctx, job, yes=False):
             if ('/tasks.py' not in item[1]) or ('__call__' in item[3]):
                 continue
             lvl += 1
-            logging.info("{0!s}> {1!s}:{2!s}".format(("-" * lvl), item[3], item[2]))
+            logging.info("{0!s}> {1!s}:{2!s}".format(("-" * lvl),
+                                                     item[3], item[2]))
         cmdno += 1
         logging.info("Step {0:d} : {1!s}".format(cmdno, cmd))
         print("--- " * 18)
@@ -128,7 +129,8 @@ def install_file_metadata_spm(ctx, yes=False):
           "liblzma-dev libjpeg-dev libz-dev" % p,
         # install additional dependencies for pip build
         "sudo apt-get {yes!s} install libzbar-dev".format(**p),
-        "sudo apt-get {yes!s} install libimage-exiftool-perl libav-tools".format(**p),
+        "sudo apt-get {yes!s} install libimage-exiftool-perl "
+          "libav-tools".format(**p),
         # install file-metadata through pip only
         "sudo pip install file-metadata --upgrade",
         # test import of file-metadata
@@ -154,7 +156,8 @@ def install_file_metadata_pip(ctx, yes=False):
           "libjpeg-dev python-virtualenv" % p,
         # install additional dependencies for pip build
         "sudo apt-get {yes!s} install libzbar-dev".format(**p),
-        "sudo apt-get {yes!s} install libimage-exiftool-perl libav-tools".format(**p),
+        "sudo apt-get {yes!s} install libimage-exiftool-perl "
+          "libav-tools".format(**p),
         # install file-metadata through pip only
         "sudo pip install file-metadata --upgrade",
         # test import of file-metadata
@@ -182,7 +185,8 @@ def install_file_metadata_git(ctx, yes=False):
           "libjpeg-dev python-virtualenv" % p,
         # install additional dependencies for pip build
         "sudo apt-get {yes!s} install libzbar-dev".format(**p),
-        "sudo apt-get {yes!s} install libimage-exiftool-perl libav-tools".format(**p),
+        "sudo apt-get {yes!s} install libimage-exiftool-perl "
+          "libav-tools".format(**p),
         # install file-metadata through git+pip
         "git clone https://github.com/pywikibot-catfiles/file-metadata.git",
         "sudo pip install ./file-metadata --upgrade",
