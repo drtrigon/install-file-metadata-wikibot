@@ -290,6 +290,9 @@ def test_this(ctx, yes=False):
     p = params(yes=yes)
     job = [
         "sudo apt-get {yes!s} install python-flake8".format(**p),
+        "python --version",
+        "pip --version",
+        "flake8 --version",
         # "flake8 --verbose --show-source --statistics --benchmark "
         #   "--disable-noqa tasks.py login-hack.py",
         # VM/local (py27):
