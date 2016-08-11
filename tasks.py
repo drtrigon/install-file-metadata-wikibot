@@ -46,25 +46,25 @@
 # * (https://pypi.python.org/pypi/meliae)
 
 from __future__ import (division, absolute_import, unicode_literals,
-    print_function)
+                        print_function)
 
 from invoke import task
-#from functools import wraps
+# from functools import wraps
 import logging
 import inspect
 
 logging.basicConfig(
-    #filename=fileName,
-    #format="%(levelname) -10s %(asctime)s %(module)s:%(lineno)s "
-    #       "%(funcName)s %(message)s",
+    # filename=fileName,
+    # format="%(levelname) -10s %(asctime)s %(module)s:%(lineno)s "
+    #        "%(funcName)s %(message)s",
     format="%(levelname) -10s %(asctime)s %(message)s",
-    #level=logging.DEBUG
+    # level=logging.DEBUG
     level=logging.INFO
 )
 cmdno = 0
 
-#TRAVIS = os.environ.get('CI', False) or \
-#         os.environ.get('TRAVIS', False)
+# TRAVIS = os.environ.get('CI', False) or \
+#          os.environ.get('TRAVIS', False)
 
 
 # Install procedure
@@ -77,9 +77,10 @@ def run(ctx, job, yes=False):
             if ('/tasks.py' not in item[1]) or ('__call__' in item[3]):
                 continue
             lvl += 1
-            logging.info("%s> %s:%s" % (("-" * lvl), item[3], item[2]))
+            logging.info("{0!s}> {1!s}:{2!s}".format(("-" * lvl),
+                                                     item[3], item[2]))
         cmdno += 1
-        logging.info("Step %i : %s" % (cmdno, cmd))
+        logging.info("Step {0:d} : {1!s}".format(cmdno, cmd))
         print("--- " * 18)
         if not yes:
             raw_input("[Enter] to continue or [Ctrl]+C to stop ...")
@@ -91,23 +92,23 @@ def params(*args, **kwargs):
     kwargs['yes'] = '--yes' if kwargs['yes'] else ''
     return kwargs
 
-## Decorator for disabling tasks
-#def disabled(func):
-#    @wraps(func)
-#    def decorated(ctx, *args, **kwargs):
-#        print("\n" + ("--- " * 18))
-#        logging.info("DISABLED : %s" % func)
-#        print("--- " * 18)
-#        #return func(ctx, *args, **kwargs)
-#        #return (lambda ctx, *args, **kwargs: None)
-#        return (lambda: None)
-#    return decorated
+# Decorator for disabling tasks
+# def disabled(func):
+#     @wraps(func)
+#     def decorated(ctx, *args, **kwargs):
+#         print("\n" + ("--- " * 18))
+#         logging.info("DISABLED : %s" % func)
+#         print("--- " * 18)
+#         # return func(ctx, *args, **kwargs)
+#         # return (lambda ctx, *args, **kwargs: None)
+#         return (lambda: None)
+#     return decorated
 
 
 # Function for disabling tasks
 def disabled(func):
     print("\n" + ("--- " * 18))
-    logging.info("DISABLED : %s" % func)
+    logging.info("DISABLED : {0!s}".format(func))
     print("--- " * 18)
 
 
@@ -116,7 +117,7 @@ def disabled(func):
 def install_file_metadata_spm(ctx, yes=False):
     p = params(yes=yes)
     job = [
-        "sudo apt-get %(yes)s update" % p,
+        "sudo apt-get {yes!s} update".format(**p),
         # install most recent pip
         # assume pip to be already installed
         "sudo pip install -U pip",
@@ -127,8 +128,9 @@ def install_file_metadata_spm(ctx, yes=False):
           "python-skimage python-zbar cmake libboost-python-dev "
           "liblzma-dev libjpeg-dev libz-dev" % p,
         # install additional dependencies for pip build
-        "sudo apt-get %(yes)s install libzbar-dev" % p,
-        "sudo apt-get %(yes)s install libimage-exiftool-perl libav-tools" % p,
+        "sudo apt-get {yes!s} install libzbar-dev".format(**p),
+        "sudo apt-get {yes!s} install libimage-exiftool-perl "
+          "libav-tools".format(**p),
         # install file-metadata through pip only
         "sudo pip install file-metadata --upgrade",
         # test import of file-metadata
@@ -142,7 +144,7 @@ def install_file_metadata_spm(ctx, yes=False):
 def install_file_metadata_pip(ctx, yes=False):
     p = params(yes=yes)
     job = [
-        "sudo apt-get %(yes)s update" % p,
+        "sudo apt-get {yes!s} update".format(**p),
         # install most recent pip
         # assume pip to be already installed
         "sudo pip install -U pip",
@@ -153,8 +155,9 @@ def install_file_metadata_pip(ctx, yes=False):
           "libblas-dev gfortran cmake libboost-python-dev liblzma-dev "
           "libjpeg-dev python-virtualenv" % p,
         # install additional dependencies for pip build
-        "sudo apt-get %(yes)s install libzbar-dev" % p,
-        "sudo apt-get %(yes)s install libimage-exiftool-perl libav-tools" % p,
+        "sudo apt-get {yes!s} install libzbar-dev".format(**p),
+        "sudo apt-get {yes!s} install libimage-exiftool-perl "
+          "libav-tools".format(**p),
         # install file-metadata through pip only
         "sudo pip install file-metadata --upgrade",
         # test import of file-metadata
@@ -168,21 +171,22 @@ def install_file_metadata_pip(ctx, yes=False):
 def install_file_metadata_git(ctx, yes=False):
     p = params(yes=yes)
     job = [
-        "sudo apt-get %(yes)s update" % p,
+        "sudo apt-get {yes!s} update".format(**p),
         # install most recent pip
         # assume pip to be already installed
         "sudo pip install -U pip",
         "pip show pip",
         # install git
-        "sudo apt-get %(yes)s install git git-review" % p,
+        "sudo apt-get {yes!s} install git git-review".format(**p),
         # install git setup dependencies
         "sudo apt-get %(yes)s install perl openjdk-7-jre python-dev "
           "pkg-config libfreetype6-dev libpng12-dev liblapack-dev "
           "libblas-dev gfortran cmake libboost-python-dev liblzma-dev "
           "libjpeg-dev python-virtualenv" % p,
         # install additional dependencies for pip build
-        "sudo apt-get %(yes)s install libzbar-dev" % p,
-        "sudo apt-get %(yes)s install libimage-exiftool-perl libav-tools" % p,
+        "sudo apt-get {yes!s} install libzbar-dev".format(**p),
+        "sudo apt-get {yes!s} install libimage-exiftool-perl "
+          "libav-tools".format(**p),
         # install file-metadata through git+pip
         "git clone https://github.com/pywikibot-catfiles/file-metadata.git",
         "sudo pip install ./file-metadata --upgrade",
@@ -190,7 +194,7 @@ def install_file_metadata_git(ctx, yes=False):
         # test import of file-metadata
         "python -c'import file_metadata; print(file_metadata.__version__)'",
         # install optional dependency OpenCV
-        "sudo apt-get %(yes)s install python-opencv opencv-data" % p,
+        "sudo apt-get {yes!s} install python-opencv opencv-data".format(**p),
         # unit-test of file-metadata
         "sudo pip install -r ./file-metadata/test-requirements.txt",
         "cd file-metadata/ && python -m pytest --cov",
@@ -204,10 +208,10 @@ def install_pywikibot(ctx, yes=False):
     p = params(yes=yes)
     job = [
         # install git
-        "sudo apt-get %(yes)s install git git-review" % p,
+        "sudo apt-get {yes!s} install git git-review".format(**p),
         # install pywikibot
-        #"git clone --branch 2.0 --recursive "
-        #  "https://gerrit.wikimedia.org/r/pywikibot/core.git",
+        # "git clone --branch 2.0 --recursive "
+        #   "https://gerrit.wikimedia.org/r/pywikibot/core.git",
         "wikibot-filemeta-log || true",
         "sudo pip install "
           "git+https://gerrit.wikimedia.org/r/pywikibot/core.git\#egg="
@@ -221,15 +225,15 @@ def install_pywikibot(ctx, yes=False):
 def install_docker(ctx, yes=False):
     p = params(yes=yes)
     job = [
-        "sudo apt-get %(yes)s update" % p,
-        "sudo apt-get %(yes)s upgrade" % p,
+        "sudo apt-get {yes!s} update".format(**p),
+        "sudo apt-get {yes!s} upgrade".format(**p),
         "sudo apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys "
           "58118E89F3A912897C070ADBF76221572C52609D" % p,
         "echo \"deb https://apt.dockerproject.org/repo ubuntu-trusty main\" | "
           "sudo tee /etc/apt/sources.list.d/docker.list" % p,
-        "sudo apt-get %(yes)s update" % p,
-        "sudo apt-get %(yes)s install docker-engine" % p,
-        #"sudo service docker start" % p,
+        "sudo apt-get {yes!s} update".format(**p),
+        "sudo apt-get {yes!s} install docker-engine".format(**p),
+        # "sudo service docker start" % p,
     ]
     run(ctx, job, yes=yes)
 
@@ -244,22 +248,22 @@ def test_script(ctx, yes=False, git=False):
         "type wikibot-filemeta-log",
         "type wikibot-filemeta-simple",
         # install optional dependency OpenCV
-        "sudo apt-get %(yes)s install python-opencv opencv-data" % p,
+        "sudo apt-get {yes!s} install python-opencv opencv-data".format(**p),
         # configuration of pywikibot
-        #"cd core/ && python pwb.py basic",  # issue: ctx.run stops after this
-        #"cd file-metadata/file_metadata/wikibot/ && \"
-        #  "python generate_user_files.py",
-        #"wikibot-create-config",
-# work-a-round hacky login.py replacement: #
+        # "cd core/ && python pwb.py basic",  # issue: ctx.run stops after this
+        # "cd file-metadata/file_metadata/wikibot/ && \"
+        #   "python generate_user_files.py",
+        # "wikibot-create-config",
+# work-a-round hacky login.py replacement: #  # noqa: E122
         "python login-hack.py $PYWIKIBOT_TOKEN",
-# end of work-a-round ######################
-        ## check login state
-        #"wget https://raw.githubusercontent.com/.../scripts/login.py",
-        #"python pwb.py login.py",
+# end of work-a-round ######################  # noqa: E122
+        # check login state
+        # "wget https://raw.githubusercontent.com/.../scripts/login.py",
+        # "python pwb.py login.py",
         # run bot tests
         "wikibot-filemeta-log -search:'eth-bib' -limit:5 -dry || true",
         "sudo pip install line_profiler memory_profiler",
-        "sudo apt-get %(yes)s install valgrind" % p,
+        "sudo apt-get {yes!s} install valgrind".format(**p),
         "python -m cProfile -s time /usr/local/bin/wikibot-filemeta-log "
           "-search:'eth-bib' -limit:5 -dry > profile.out && "
           "head profile.out -n 150",
@@ -273,8 +277,8 @@ def test_script(ctx, yes=False, git=False):
           "-search:'eth-bib' -limit:5 -dry || "           # ignore error
           "cat valgrind.log && ms_print massif.out "
           "|| true",                                      # ignore error
-        #"heaptrack python wikibot-filemeta-log "
-        #  "-search:'eth-bib' -limit:5 -dry",
+        # "heaptrack python wikibot-filemeta-log "
+        #   "-search:'eth-bib' -limit:5 -dry",
         "wikibot-filemeta-simple -cat:SVG_files -limit:5",
     ]
     run(ctx, job, yes=yes)
@@ -285,9 +289,26 @@ def test_script(ctx, yes=False, git=False):
 def test_this(ctx, yes=False):
     p = params(yes=yes)
     job = [
-        "sudo apt-get %(yes)s install python-flake8" % p,
-        #"flake8 tasks.py login-hack.py",
-        "flake8 --ignore=E121,E122,E128 tasks.py login-hack.py",
+        "sudo apt-get {yes!s} install python-flake8".format(**p),
+        "python --version",
+        "pip --version",
+        "flake8 --version",
+        # "flake8 --verbose --show-source --statistics --benchmark "
+        #   "--disable-noqa tasks.py login-hack.py",
+        # VM/local (py27):
+        # E131 continuation line unaligned for hanging indent
+        # FI12 __future__ import "with_statement" missing
+        # FI15 __future__ import "generator_stop" missing
+        # FI16 __future__ import "nested_scopes" missing
+        # FI17 __future__ import "generators" missing
+        # FI50 __future__ import "division" present
+        # FI51 __future__ import "absolute_import" present
+        # FI53 __future__ import "print_function" present
+        # FI54 __future__ import "unicode_literals" present
+        # travis (py3?):
+        # E121 continuation line indentation is not a multiple of four
+        "flake8 --verbose --show-source --statistics --benchmark "
+          "--ignore=E121,E131,FI tasks.py login-hack.py",
         "invoke --list",
     ]
     run(ctx, job, yes=yes)
