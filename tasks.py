@@ -292,6 +292,7 @@ def test_this(ctx, yes=False):
         "sudo apt-get {yes!s} install python-flake8".format(**p),
         # "flake8 --verbose --show-source --statistics --benchmark "
         #   "--disable-noqa tasks.py login-hack.py",
+        # VM/local (py27):
         # E131 continuation line unaligned for hanging indent
         # FI12 __future__ import "with_statement" missing
         # FI15 __future__ import "generator_stop" missing
@@ -301,8 +302,10 @@ def test_this(ctx, yes=False):
         # FI51 __future__ import "absolute_import" present
         # FI53 __future__ import "print_function" present
         # FI54 __future__ import "unicode_literals" present
+        # travis (py3?):
+        # E121 continuation line indentation is not a multiple of four
         "flake8 --verbose --show-source --statistics --benchmark "
-          "--ignore=E131,FI tasks.py login-hack.py",
+          "--ignore=E121,E131,FI tasks.py login-hack.py",
         "invoke --list",
     ]
     run(ctx, job, yes=yes)
