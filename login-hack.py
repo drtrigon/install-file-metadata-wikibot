@@ -20,10 +20,10 @@
 #
 
 from __future__ import (division, absolute_import, unicode_literals,
-    print_function)
+                        print_function)
 
 import sys
 
 if (len(sys.argv) == 2) and (len(sys.argv[1]) == 32):
     open('pywikibot.lwp', 'w').write(open('pywikibot.lwp.hack', 'r').read() %
-        {'PYWIKIBOT_TOKEN': sys.argv[1]})
+                                     {'PYWIKIBOT_TOKEN': sys.argv[1]})

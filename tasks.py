@@ -46,25 +46,25 @@
 # * (https://pypi.python.org/pypi/meliae)
 
 from __future__ import (division, absolute_import, unicode_literals,
-    print_function)
+                        print_function)
 
 from invoke import task
-#from functools import wraps
+# from functools import wraps
 import logging
 import inspect
 
 logging.basicConfig(
-    #filename=fileName,
-    #format="%(levelname) -10s %(asctime)s %(module)s:%(lineno)s "
-    #       "%(funcName)s %(message)s",
+    # filename=fileName,
+    # format="%(levelname) -10s %(asctime)s %(module)s:%(lineno)s "
+    #        "%(funcName)s %(message)s",
     format="%(levelname) -10s %(asctime)s %(message)s",
-    #level=logging.DEBUG
+    # level=logging.DEBUG
     level=logging.INFO
 )
 cmdno = 0
 
-#TRAVIS = os.environ.get('CI', False) or \
-#         os.environ.get('TRAVIS', False)
+# TRAVIS = os.environ.get('CI', False) or \
+#          os.environ.get('TRAVIS', False)
 
 
 # Install procedure
@@ -92,17 +92,17 @@ def params(*args, **kwargs):
     kwargs['yes'] = '--yes' if kwargs['yes'] else ''
     return kwargs
 
-## Decorator for disabling tasks
-#def disabled(func):
-#    @wraps(func)
-#    def decorated(ctx, *args, **kwargs):
-#        print("\n" + ("--- " * 18))
-#        logging.info("DISABLED : %s" % func)
-#        print("--- " * 18)
-#        #return func(ctx, *args, **kwargs)
-#        #return (lambda ctx, *args, **kwargs: None)
-#        return (lambda: None)
-#    return decorated
+# Decorator for disabling tasks
+# def disabled(func):
+#     @wraps(func)
+#     def decorated(ctx, *args, **kwargs):
+#         print("\n" + ("--- " * 18))
+#         logging.info("DISABLED : %s" % func)
+#         print("--- " * 18)
+#         # return func(ctx, *args, **kwargs)
+#         # return (lambda ctx, *args, **kwargs: None)
+#         return (lambda: None)
+#     return decorated
 
 
 # Function for disabling tasks
@@ -210,8 +210,8 @@ def install_pywikibot(ctx, yes=False):
         # install git
         "sudo apt-get {yes!s} install git git-review".format(**p),
         # install pywikibot
-        #"git clone --branch 2.0 --recursive "
-        #  "https://gerrit.wikimedia.org/r/pywikibot/core.git",
+        # "git clone --branch 2.0 --recursive "
+        #   "https://gerrit.wikimedia.org/r/pywikibot/core.git",
         "wikibot-filemeta-log || true",
         "sudo pip install "
           "git+https://gerrit.wikimedia.org/r/pywikibot/core.git\#egg="
@@ -233,7 +233,7 @@ def install_docker(ctx, yes=False):
           "sudo tee /etc/apt/sources.list.d/docker.list" % p,
         "sudo apt-get {yes!s} update".format(**p),
         "sudo apt-get {yes!s} install docker-engine".format(**p),
-        #"sudo service docker start" % p,
+        # "sudo service docker start" % p,
     ]
     run(ctx, job, yes=yes)
 
@@ -250,16 +250,16 @@ def test_script(ctx, yes=False, git=False):
         # install optional dependency OpenCV
         "sudo apt-get {yes!s} install python-opencv opencv-data".format(**p),
         # configuration of pywikibot
-        #"cd core/ && python pwb.py basic",  # issue: ctx.run stops after this
-        #"cd file-metadata/file_metadata/wikibot/ && \"
-        #  "python generate_user_files.py",
-        #"wikibot-create-config",
-# work-a-round hacky login.py replacement: #
+        # "cd core/ && python pwb.py basic",  # issue: ctx.run stops after this
+        # "cd file-metadata/file_metadata/wikibot/ && \"
+        #   "python generate_user_files.py",
+        # "wikibot-create-config",
+# work-a-round hacky login.py replacement: #  # noqa: E122
         "python login-hack.py $PYWIKIBOT_TOKEN",
-# end of work-a-round ######################
-        ## check login state
-        #"wget https://raw.githubusercontent.com/.../scripts/login.py",
-        #"python pwb.py login.py",
+# end of work-a-round ######################  # noqa: E122
+        # check login state
+        # "wget https://raw.githubusercontent.com/.../scripts/login.py",
+        # "python pwb.py login.py",
         # run bot tests
         "wikibot-filemeta-log -search:'eth-bib' -limit:5 -dry || true",
         "sudo pip install line_profiler memory_profiler",
@@ -277,8 +277,8 @@ def test_script(ctx, yes=False, git=False):
           "-search:'eth-bib' -limit:5 -dry || "           # ignore error
           "cat valgrind.log && ms_print massif.out "
           "|| true",                                      # ignore error
-        #"heaptrack python wikibot-filemeta-log "
-        #  "-search:'eth-bib' -limit:5 -dry",
+        # "heaptrack python wikibot-filemeta-log "
+        #   "-search:'eth-bib' -limit:5 -dry",
         "wikibot-filemeta-simple -cat:SVG_files -limit:5",
     ]
     run(ctx, job, yes=yes)
@@ -290,8 +290,19 @@ def test_this(ctx, yes=False):
     p = params(yes=yes)
     job = [
         "sudo apt-get {yes!s} install python-flake8".format(**p),
-        #"flake8 tasks.py login-hack.py",
-        "flake8 --ignore=E121,E122,E128 tasks.py login-hack.py",
+        # "flake8 --verbose --show-source --statistics --benchmark "
+        #   "--disable-noqa tasks.py login-hack.py",
+        # E131 continuation line unaligned for hanging indent
+        # FI12 __future__ import "with_statement" missing
+        # FI15 __future__ import "generator_stop" missing
+        # FI16 __future__ import "nested_scopes" missing
+        # FI17 __future__ import "generators" missing
+        # FI50 __future__ import "division" present
+        # FI51 __future__ import "absolute_import" present
+        # FI53 __future__ import "print_function" present
+        # FI54 __future__ import "unicode_literals" present
+        "flake8 --verbose --show-source --statistics --benchmark "
+          "--ignore=E131,FI tasks.py login-hack.py",
         "invoke --list",
     ]
     run(ctx, job, yes=yes)
