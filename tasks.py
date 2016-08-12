@@ -68,9 +68,11 @@ cmdno = 0
 
 
 # Install procedure
-def run(ctx, job, yes=False):
+def run(ctx, job, **kwargs):
     global cmdno
+    kwargs = params(**kwargs)
     for cmd in job:
+        cmd = cmd.format(**kwargs)
         print("\n" + ("--- " * 18))
         lvl = 0
         for item in inspect.stack()[1:][::-1]:
@@ -82,14 +84,15 @@ def run(ctx, job, yes=False):
         cmdno += 1
         logging.info("Step {0:d} : {1!s}".format(cmdno, cmd))
         print("--- " * 18)
-        if not yes:
+        if not kwargs['yes']:
             raw_input("[Enter] to continue or [Ctrl]+C to stop ...")
         ctx.run(cmd)
 
 
 # Parameter procesing
 def params(*args, **kwargs):
-    kwargs['yes'] = '--yes' if kwargs['yes'] else ''
+    kwargs['yes'] = '--yes' if kwargs.get('yes', False) else ''
+    kwargs['git'] = kwargs.get('git', False)
     return kwargs
 
 # Decorator for disabling tasks
@@ -115,22 +118,21 @@ def disabled(func):
 # Test through system package management
 @task
 def install_file_metadata_spm(ctx, yes=False):
-    p = params(yes=yes)
     job = [
-        "sudo apt-get {yes!s} update".format(**p),
+        "sudo apt-get {yes!s} update",
         # install most recent pip
         # assume pip to be already installed
         "sudo pip install -U pip",
         "pip show pip",
         # install spm setup dependencies
-        "sudo apt-get %(yes)s install python-appdirs python-magic "
+        "sudo apt-get {yes!s} install python-appdirs python-magic "
           "python-numpy python-scipy python-matplotlib python-wand "
           "python-skimage python-zbar cmake libboost-python-dev "
-          "liblzma-dev libjpeg-dev libz-dev" % p,
+          "liblzma-dev libjpeg-dev libz-dev",
         # install additional dependencies for pip build
-        "sudo apt-get {yes!s} install libzbar-dev".format(**p),
+        "sudo apt-get {yes!s} install libzbar-dev",
         "sudo apt-get {yes!s} install libimage-exiftool-perl "
-          "libav-tools".format(**p),
+          "libav-tools",
         # install file-metadata through pip only
         "sudo pip install file-metadata --upgrade",
         # test import of file-metadata
@@ -142,22 +144,21 @@ def install_file_metadata_spm(ctx, yes=False):
 # Test through pip
 @task
 def install_file_metadata_pip(ctx, yes=False):
-    p = params(yes=yes)
     job = [
-        "sudo apt-get {yes!s} update".format(**p),
+        "sudo apt-get {yes!s} update",
         # install most recent pip
         # assume pip to be already installed
         "sudo pip install -U pip",
         "pip show pip",
         # install pip setup dependencies
-        "sudo apt-get %(yes)s install perl openjdk-7-jre python-dev "
+        "sudo apt-get {yes!s} install perl openjdk-7-jre python-dev "
           "pkg-config libfreetype6-dev libpng12-dev liblapack-dev "
           "libblas-dev gfortran cmake libboost-python-dev liblzma-dev "
-          "libjpeg-dev python-virtualenv" % p,
+          "libjpeg-dev python-virtualenv",
         # install additional dependencies for pip build
-        "sudo apt-get {yes!s} install libzbar-dev".format(**p),
+        "sudo apt-get {yes!s} install libzbar-dev",
         "sudo apt-get {yes!s} install libimage-exiftool-perl "
-          "libav-tools".format(**p),
+          "libav-tools",
         # install file-metadata through pip only
         "sudo pip install file-metadata --upgrade",
         # test import of file-metadata
@@ -169,24 +170,23 @@ def install_file_metadata_pip(ctx, yes=False):
 # Test through github
 @task
 def install_file_metadata_git(ctx, yes=False):
-    p = params(yes=yes)
     job = [
-        "sudo apt-get {yes!s} update".format(**p),
+        "sudo apt-get {yes!s} update",
         # install most recent pip
         # assume pip to be already installed
         "sudo pip install -U pip",
         "pip show pip",
         # install git
-        "sudo apt-get {yes!s} install git git-review".format(**p),
+        "sudo apt-get {yes!s} install git git-review",
         # install git setup dependencies
-        "sudo apt-get %(yes)s install perl openjdk-7-jre python-dev "
+        "sudo apt-get {yes!s} install perl openjdk-7-jre python-dev "
           "pkg-config libfreetype6-dev libpng12-dev liblapack-dev "
           "libblas-dev gfortran cmake libboost-python-dev liblzma-dev "
-          "libjpeg-dev python-virtualenv" % p,
+          "libjpeg-dev python-virtualenv",
         # install additional dependencies for pip build
-        "sudo apt-get {yes!s} install libzbar-dev".format(**p),
+        "sudo apt-get {yes!s} install libzbar-dev",
         "sudo apt-get {yes!s} install libimage-exiftool-perl "
-          "libav-tools".format(**p),
+          "libav-tools",
         # install file-metadata through git+pip
         "git clone https://github.com/pywikibot-catfiles/file-metadata.git",
         "sudo pip install ./file-metadata --upgrade",
@@ -194,7 +194,7 @@ def install_file_metadata_git(ctx, yes=False):
         # test import of file-metadata
         "python -c'import file_metadata; print(file_metadata.__version__)'",
         # install optional dependency OpenCV
-        "sudo apt-get {yes!s} install python-opencv opencv-data".format(**p),
+        "sudo apt-get {yes!s} install python-opencv opencv-data",
         # unit-test of file-metadata
         "sudo pip install -r ./file-metadata/test-requirements.txt",
         "cd file-metadata/ && python -m pytest --cov",
@@ -205,10 +205,9 @@ def install_file_metadata_git(ctx, yes=False):
 # Installation of pywikibot
 @task
 def install_pywikibot(ctx, yes=False):
-    p = params(yes=yes)
     job = [
         # install git
-        "sudo apt-get {yes!s} install git git-review".format(**p),
+        "sudo apt-get {yes!s} install git git-review",
         # install pywikibot
         # "git clone --branch 2.0 --recursive "
         #   "https://gerrit.wikimedia.org/r/pywikibot/core.git",
@@ -223,16 +222,15 @@ def install_pywikibot(ctx, yes=False):
 # Install Docker container
 @task
 def install_docker(ctx, yes=False):
-    p = params(yes=yes)
     job = [
-        "sudo apt-get {yes!s} update".format(**p),
-        "sudo apt-get {yes!s} upgrade".format(**p),
+        "sudo apt-get {yes!s} update",
+        "sudo apt-get {yes!s} upgrade",
         "sudo apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys "
-          "58118E89F3A912897C070ADBF76221572C52609D" % p,
+          "58118E89F3A912897C070ADBF76221572C52609D",
         "echo \"deb https://apt.dockerproject.org/repo ubuntu-trusty main\" | "
-          "sudo tee /etc/apt/sources.list.d/docker.list" % p,
-        "sudo apt-get {yes!s} update".format(**p),
-        "sudo apt-get {yes!s} install docker-engine".format(**p),
+          "sudo tee /etc/apt/sources.list.d/docker.list",
+        "sudo apt-get {yes!s} update",
+        "sudo apt-get {yes!s} install docker-engine",
         # "sudo service docker start" % p,
     ]
     run(ctx, job, yes=yes)
@@ -241,14 +239,13 @@ def install_docker(ctx, yes=False):
 # Test of pywikibot-catfiles scripts (and file-metadata) including analysis
 @task
 def test_script(ctx, yes=False, git=False):
-    p = params(yes=yes)
     job = [
         # check wikibot scripts
         "type wikibot-create-config",
         "type wikibot-filemeta-log",
         "type wikibot-filemeta-simple",
         # install optional dependency OpenCV
-        "sudo apt-get {yes!s} install python-opencv opencv-data".format(**p),
+        "sudo apt-get {yes!s} install python-opencv opencv-data",
         # configuration of pywikibot
         # "cd core/ && python pwb.py basic",  # issue: ctx.run stops after this
         # "cd file-metadata/file_metadata/wikibot/ && \"
@@ -263,7 +260,7 @@ def test_script(ctx, yes=False, git=False):
         # run bot tests
         "wikibot-filemeta-log -search:'eth-bib' -limit:5 -dry || true",
         "sudo pip install line_profiler memory_profiler",
-        "sudo apt-get {yes!s} install valgrind".format(**p),
+        "sudo apt-get {yes!s} install valgrind",
         "python -m cProfile -s time /usr/local/bin/wikibot-filemeta-log "
           "-search:'eth-bib' -limit:5 -dry > profile.out && "
           "head profile.out -n 150",
@@ -281,15 +278,15 @@ def test_script(ctx, yes=False, git=False):
         #   "-search:'eth-bib' -limit:5 -dry",
         "wikibot-filemeta-simple -cat:SVG_files -limit:5",
     ]
-    run(ctx, job, yes=yes)
+    run(ctx, job, yes=yes, git=git)
 
 
 # Test of THIS invoke script
 @task
 def test_this(ctx, yes=False):
-    p = params(yes=yes)
     job = [
-        "sudo apt-get {yes!s} install python-flake8".format(**p),
+        "sudo apt-get {yes!s} update",
+        "sudo apt-get {yes!s} install python-flake8",
         "python --version",
         "pip --version",
         "flake8 --version",
