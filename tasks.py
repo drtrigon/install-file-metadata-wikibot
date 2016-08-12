@@ -197,7 +197,8 @@ def install_file_metadata_git(ctx, yes=False):
         "sudo apt-get {yes!s} install python-opencv opencv-data",
         # unit-test of file-metadata
         "sudo pip install -r ./file-metadata/test-requirements.txt",
-        "cd file-metadata/ && python -m pytest --cov --durations=20 --pastebin=failed",
+        "cd file-metadata/ && python -m pytest --cov --durations=20 "
+          "--pastebin=failed",
     ]
     run(ctx, job, yes=yes)
 
@@ -305,7 +306,8 @@ def test_this(ctx, yes=False):
         # travis (py3?):
         # E121 continuation line indentation is not a multiple of four
         "flake8 --verbose --show-source --statistics --benchmark "
-          "--ignore=E121,E131,FI tasks.py login-hack.py",
+          "--max-complexity 10 --ignore=E121,E131,FI "
+          "tasks.py login-hack.py",
         "invoke --list",
     ]
     run(ctx, job, yes=yes)
