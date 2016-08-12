@@ -8,13 +8,10 @@ os:
   - linux
 
 env:
-  global:
-    - PYTHONIOENCODING=UTF-8  # bugfix: UnicodeEncodeError
-  matrix:
-    - TEST_CMD="invoke test_this --yes"
-    - TEST_CMD="invoke install_file_metadata_spm --yes install_pywikibot --yes test_script --yes"  # trusty only
-    - TEST_CMD="invoke install_file_metadata_pip --yes install_pywikibot --yes test_script --yes"  # trusty only, needs openjdk-7-jre
-    - TEST_CMD="invoke install_file_metadata_git --yes install_pywikibot --yes test_script --yes --git"
+  - TEST_CMD="invoke test_this --yes"
+  - TEST_CMD="invoke install_file_metadata_spm --yes install_pywikibot --yes test_script --yes"  # trusty only
+  - TEST_CMD="invoke install_file_metadata_pip --yes install_pywikibot --yes test_script --yes"  # trusty only, needs openjdk-7-jre
+  - TEST_CMD="invoke install_file_metadata_git --yes install_pywikibot --yes test_script --yes --git"
 
 before_install:
   - sudo apt-get -qq update
