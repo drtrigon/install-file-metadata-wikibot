@@ -197,8 +197,23 @@ def install_file_metadata_git(ctx, yes=False):
         "sudo apt-get {yes!s} install python-opencv opencv-data",
         # unit-test of file-metadata
         "sudo pip install -r ./file-metadata/test-requirements.txt",
+        # "cd file-metadata/ && python -m pytest --cov --durations=20 "
+        #   "--pastebin=failed",
         "cd file-metadata/ && python -m pytest --cov --durations=20 "
-          "--pastebin=failed",
+          "--pastebin=failed | tee out.tmp",              # report error
+        # error tracking and stats (report error instead of failing)
+        # https://rollbar.com/docs/notifier/pyrollbar/#command-line-usage
+        "sudo pip install rollbar",
+        # "rollbar -t cfde394e4c534722a0e55de1ef435190 -e test debug "
+        #   "testing access token",
+        # "cd file-metadata/ && cat out.tmp | awk '/= FAILURES =/,/\\n===/' |"
+        #   " awk -v RS=\"\\f\" '{{gsub(/\\n/,\"\\r\")}}1' | "
+        #   "awk '{{print \"error\",$0}}' | "
+        #   "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
+        "cd file-metadata/ && cat out.tmp | awk '/= FAILURES =/,/\\n===/' | "
+          "head -n -1 | awk -v RS=\"\\f\" '{{gsub(/\\n/,\"\\r\")}}1' | "
+          "awk -v RS=\"\\f\" '{{gsub(/\\r___/,\"\\nerror ___\")}}1' | "
+          "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
     ]
     run(ctx, job, yes=yes)
 
@@ -259,7 +274,9 @@ def test_script(ctx, yes=False, git=False):
         # "wget https://raw.githubusercontent.com/.../scripts/login.py",
         # "python pwb.py login.py",
         # run bot tests
-        "wikibot-filemeta-log -search:'eth-bib' -limit:5 -dry || true",
+        # "wikibot-filemeta-log -search:'eth-bib' -limit:5 -dry || true",
+        "wikibot-filemeta-log -search:'eth-bib' -limit:5 -dry 2>&1 | "
+          "tee out-log.tmp",                              # report error
         "sudo pip install line_profiler memory_profiler",
         "sudo apt-get {yes!s} install valgrind",
         "python -m cProfile -s time /usr/local/bin/wikibot-filemeta-log "
@@ -277,7 +294,20 @@ def test_script(ctx, yes=False, git=False):
           "|| true",                                      # ignore error
         # "heaptrack python wikibot-filemeta-log "
         #   "-search:'eth-bib' -limit:5 -dry",
-        "wikibot-filemeta-simple -cat:SVG_files -limit:5",
+        # "wikibot-filemeta-simple -cat:SVG_files -limit:5",
+        "wikibot-filemeta-simple -cat:SVG_files -limit:5 2>&1 | "
+          "tee out-simple.tmp",                           # report error
+        # error tracking and stats (report error instead of failing)
+        # https://rollbar.com/docs/notifier/pyrollbar/#command-line-usage
+        "sudo pip install rollbar",
+        "cat out-log.tmp | awk '/Traceback /,!/./' | "
+          "awk -v RS=\"\\f\" '{{gsub(/\\n/,\"\\r\")}}1' | "
+          "awk -v RS=\"\\f\" '{{gsub(/Traceback /,\"error Traceback \")}}1' |"
+          " rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
+        "cat out-simple.tmp | awk '/Traceback /,!/./' | "
+          "awk -v RS=\"\\f\" '{{gsub(/\\n/,\"\\r\")}}1' | "
+          "awk -v RS=\"\\f\" '{{gsub(/Traceback /,\"error Traceback \")}}1' |"
+          " rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
     ]
     run(ctx, job, yes=yes, git=git)
 
