@@ -211,6 +211,7 @@ def install_file_metadata_git(ctx, yes=False):
         #   "awk '{{print \"error\",$0}}' | "
         #   "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
         "cd file-metadata/ && cat out.tmp | awk '/= FAILURES =/,/\\n===/' | "
+          "awk -v RS=\"\\f\" '{{gsub(/\\x1B\\[[0-9;]*[mK]/,\"\")}}1' | "
           "head -n -1 | awk -v RS=\"\\f\" '{{gsub(/\\n/,\"\\r\")}}1' | "
           "awk -v RS=\"\\f\" '{{gsub(/\\r___/,\"\\nerror ___\")}}1' | "
           "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
