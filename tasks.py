@@ -217,6 +217,7 @@ def install_file_metadata_git(ctx, yes=False):
           "awk -v RS=\"\\f\" '{{gsub(/\\r___/,\"\\nerror ___\")}}1' | "
           # "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
           "cat > out-send.tmp",
+        "cd file-metadata/ && cat out.tmp",
         "cd file-metadata/ && cat out-send.tmp",
 #        "cd file-metadata/ && cat out-send.tmp | ",
 #          # "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
