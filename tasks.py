@@ -194,27 +194,33 @@ def install_file_metadata_git(ctx, yes=False):
         # test import of file-metadata
         "python -c'import file_metadata; print(file_metadata.__version__)'",
         # install optional dependency OpenCV
-        "sudo apt-get {yes!s} install python-opencv opencv-data",
+#        "sudo apt-get {yes!s} install python-opencv opencv-data",
+        "sudo apt-get {yes!s} install python-opencv",
         # unit-test of file-metadata
         "sudo pip install -r ./file-metadata/test-requirements.txt",
+#        "cd file-metadata/ && python -m pytest --cov --durations=20 "
+#          "--pastebin=failed",
         "cd file-metadata/ && python -m pytest --cov --durations=20 "
-          "--pastebin=failed",
-        # "cd file-metadata/ && python -m pytest --cov --durations=20 "
-        #   "--pastebin=failed | tee out.tmp",              # report error
+          "--pastebin=failed | tee out.tmp",              # report error
         # error tracking and stats (report error instead of failing)
         # https://rollbar.com/docs/notifier/pyrollbar/#command-line-usage
-        # "sudo pip install rollbar",
+        "sudo pip install rollbar",
         # "rollbar -t cfde394e4c534722a0e55de1ef435190 -e test debug "
         #   "testing access token",
         # "cd file-metadata/ && cat out.tmp | awk '/= FAILURES =/,/\\n===/' |"
         #   " awk -v RS=\"\\f\" '{{gsub(/\\n/,\"\\r\")}}1' | "
         #   "awk '{{print \"error\",$0}}' | "
         #   "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
-        # "cd file-metadata/ && cat out.tmp | awk '/= FAILURES =/,/\\n===/' |"
-        #   " head -n -1 | awk -v RS=\"\\f\" '{{gsub(/\\n/,\"\\r\")}}1' | "
-        #   "awk -v RS=\"\\f\" '{{gsub(/\\x1B\\[[0-9;]*[mK]/,\"\")}}1' | "
-        #   "awk -v RS=\"\\f\" '{{gsub(/\\r___/,\"\\nerror ___\")}}1' | "
-        #   "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
+        "cd file-metadata/ && cat out.tmp | awk '/= FAILURES =/,/\\n===/' |"
+          " head -n -1 | awk -v RS=\"\\f\" '{{gsub(/\\n/,\"\\r\")}}1' | "
+          "awk -v RS=\"\\f\" '{{gsub(/\\x1B\\[[0-9;]*[mK]/,\"\")}}1' | "
+          "awk -v RS=\"\\f\" '{{gsub(/\\r___/,\"\\nerror ___\")}}1' | "
+          # "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
+          "cat > out-send.tmp",
+        "cd file-metadata/ && cat out-send.tmp",
+#        "cd file-metadata/ && cat out-send.tmp | ",
+#          # "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
+#          "rollbar -t cfde394e4c534722a0e55de1ef435190 -e test -v",
     ]
     run(ctx, job, yes=yes)
 
