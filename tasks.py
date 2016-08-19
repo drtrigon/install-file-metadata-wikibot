@@ -217,8 +217,8 @@ def install_file_metadata_git(ctx, yes=False):
           # "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
           "cat > out-send.tmp",
         "cd file-metadata/ && cat out.tmp | nc termbin.com 9999",
-        # "cd file-metadata/ && cat out-send.tmp | nc termbin.com 9999",
-        "cd file-metadata/ && cat out-send.tmp | ",
+        "cd file-metadata/ && cat out-send.tmp | nc termbin.com 9999",
+        "cd file-metadata/ && cat out-send.tmp | "
           # "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
           "rollbar -t cfde394e4c534722a0e55de1ef435190 -e test -v",
     ]
