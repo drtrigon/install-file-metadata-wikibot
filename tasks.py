@@ -217,7 +217,7 @@ def install_file_metadata_git(ctx, yes=False):
           "awk -v RS=\"\\f\" '{{gsub(/\\r___/,\"\\nerror ___\")}}1' | "
           # "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
           "cat > out-send.tmp",
-        "sudo pip install bpaste",
+        "sudo apt-get install netcat-openbsd",
         "cd file-metadata/ && cat out.tmp | nc termbin.com 9999",
         "cd file-metadata/ && cat out-send.tmp | nc termbin.com 9999",
 #        "cd file-metadata/ && cat out-send.tmp | ",
