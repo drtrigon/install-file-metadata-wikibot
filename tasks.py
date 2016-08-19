@@ -194,12 +194,11 @@ def install_file_metadata_git(ctx, yes=False):
         # test import of file-metadata
         "python -c'import file_metadata; print(file_metadata.__version__)'",
         # install optional dependency OpenCV
-#        "sudo apt-get {yes!s} install python-opencv opencv-data",
-        "sudo apt-get {yes!s} install python-opencv",
+        "sudo apt-get {yes!s} install python-opencv opencv-data",
         # unit-test of file-metadata
         "sudo pip install -r ./file-metadata/test-requirements.txt",
-#        "cd file-metadata/ && python -m pytest --cov --durations=20 "
-#          "--pastebin=failed",
+        # "cd file-metadata/ && python -m pytest --cov --durations=20 "
+        #   "--pastebin=failed",
         "cd file-metadata/ && python -m pytest --cov --durations=20 "
           "--pastebin=failed | tee out.tmp",              # report error
         # error tracking and stats (report error instead of failing)
@@ -217,12 +216,11 @@ def install_file_metadata_git(ctx, yes=False):
           "awk -v RS=\"\\f\" '{{gsub(/\\r___/,\"\\nerror ___\")}}1' | "
           # "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
           "cat > out-send.tmp",
-        "sudo apt-get install netcat-openbsd",
         "cd file-metadata/ && cat out.tmp | nc termbin.com 9999",
-        "cd file-metadata/ && cat out-send.tmp | nc termbin.com 9999",
-#        "cd file-metadata/ && cat out-send.tmp | ",
-#          # "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
-#          "rollbar -t cfde394e4c534722a0e55de1ef435190 -e test -v",
+        # "cd file-metadata/ && cat out-send.tmp | nc termbin.com 9999",
+        "cd file-metadata/ && cat out-send.tmp | ",
+          # "rollbar -t cfde394e4c534722a0e55de1ef435190 -e production -v",
+          "rollbar -t cfde394e4c534722a0e55de1ef435190 -e test -v",
     ]
     run(ctx, job, yes=yes)
 
