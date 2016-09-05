@@ -295,7 +295,7 @@ def test_script(ctx, yes=False, git=False):
           "python -m line_profiler wikibot-filemeta-log.lprof ",
         # "pprofile wikibot-filemeta-log "
         #   "-search:'eth-bib' -limit:5 -dry",
-        "cd file-metadata/ && pprofile file_metadata/wikibot/log_bot.py "
+        "pprofile $(which wikibot-filemeta-log) "
           "-limit:5 -dry",
         "python -m memory_profiler wikibot-filemeta-log "
           "-search:'eth-bib' -limit:5 -dry || true",      # ignore error
