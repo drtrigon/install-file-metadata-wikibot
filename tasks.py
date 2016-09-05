@@ -308,8 +308,9 @@ def test_script(ctx, yes=False, git=False):
           "tee out-log.tmp",                              # report error
         "sudo pip install pprofile",
         "sudo apt-get {yes!s} install valgrind",
-        "pprofile --include log_bot.py -- $(which wikibot-filemeta-log) "
-          "-search:'eth-bib' -limit:5 -dry || true",      # ignore error
+        "pprofile -o pprofile.out --include log_bot.py -- "
+          "$(which wikibot-filemeta-log) -search:'eth-bib' "
+          "-limit:5 -dry || cat pprofile.out",            # ignore error
         "python -m cProfile -s time $(which wikibot-filemeta-log) "
           "-search:'eth-bib' -limit:5 -dry > profile.out && "
           "head profile.out -n 50",
