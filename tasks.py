@@ -24,6 +24,7 @@
 # Performance Analysis (Time and Memory Profiling):
 # * https://www.huyng.com/posts/python-performance-analysis
 # * http://milianw.de/blog/heaptrack-a-heap-memory-profiler-for-linux
+# * https://pypi.python.org/pypi/pprofile
 #
 # * http://stackoverflow.com/questions/582336/ \
 #     how-can-you-profile-a-python-script
@@ -284,7 +285,7 @@ def test_script(ctx, yes=False, git=False):
         # "wikibot-filemeta-log -search:'eth-bib' -limit:5 -dry || true",
         "wikibot-filemeta-log -search:'eth-bib' -limit:5 -dry 2>&1 | "
           "tee out-log.tmp",                              # report error
-        "sudo pip install line_profiler memory_profiler",
+        "sudo pip install line_profiler memory_profiler pprofile",
         "sudo apt-get {yes!s} install valgrind",
         "python -m cProfile -s time /usr/local/bin/wikibot-filemeta-log "
           "-search:'eth-bib' -limit:5 -dry > profile.out && "
@@ -292,6 +293,8 @@ def test_script(ctx, yes=False, git=False):
         "kernprof -l -v wikibot-filemeta-log "
           "-search:'eth-bib' -limit:5 -dry && "
           "python -m line_profiler wikibot-filemeta-log.lprof ",
+        "pprofile wikibot-filemeta-log "
+          "-search:'eth-bib' -limit:5 -dry",
         "python -m memory_profiler wikibot-filemeta-log "
           "-search:'eth-bib' -limit:5 -dry || true",      # ignore error
         "valgrind --tool=massif --massif-out-file=massif.out "
