@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Hi There!
 # This script serves for the purpose of installing a testing environment to a
 # Kubuntu VirtualBox guest as described in User:DrTrigon/file-metadata:
 # https://commons.wikimedia.org/wiki/User:DrTrigon/file-metadata
@@ -16,20 +15,15 @@
 # Inspired by https://github.com/pypa/get-pip/blob/master/get-pip.py
 #         and http://www.pyinvoke.org/
 #
-# Syntax and Coverage:
-# * Syntax: pyflake/flake8 (PEP8)
-# * (unittests)
-# * (coverage)
+# Analysis and Monitoring of Quality:
+#       Syntax: pyflake/flake8 (PEP8)
+#   Complexity: flake8, py.test
+#    UnitTests: py.test
+#     Coverage: py.test
+#       Timing: (c)Profiler, pprofile, py.test
+#       Memory: Valgrind/massif
+#               (missing: memory line profiler)
 #
-# Performance Analysis (Time and Memory Profiling):
-# * https://www.huyng.com/posts/python-performance-analysis
-# * http://milianw.de/blog/heaptrack-a-heap-memory-profiler-for-linux
-# * https://pypi.python.org/pypi/pprofile
-#
-# * http://stackoverflow.com/questions/582336/ \
-#     how-can-you-profile-a-python-script
-# * https://zapier.com/engineering/profiling-python-boss/
-# * https://pymotw.com/2/profile/
 # * https://julien.danjou.info/blog/2015/ \
 #     guide-to-python-profiling-cprofile-concrete-case-carbonara
 #   -> generate stats and graphs
@@ -224,6 +218,33 @@ def install_file_metadata_git(ctx, yes=False):
           "rollbar -t cfde394e4c534722a0e55de1ef435190 -e test -v",
     ]
     run(ctx, job, yes=yes)
+    test_file_metadata_git(ctx, yes=yes)
+
+
+# Check performance for github: syntax, complexity, timing, memory
+@task
+def test_file_metadata_git(ctx, yes=False):
+    job = [
+        "sudo pip install radon pprofile",
+        "sudo apt-get {yes!s} install valgrind",
+        # complexity (--mccabe) and time (--profile, --durations) analysis
+        # by pytest are too simplistic and buggy currently
+        "cd file-metadata/ && flake8 --verbose --show-source --statistics "
+          "--benchmark --max-complexity 10 "
+#           "setup.py setupdeps.py file_metadata tests",        # noqa: E122
+          "setup.py setupdeps.py file_metadata tests || true",  # ignore error
+        "cd file-metadata/ && radon mi "
+          "setup.py setupdeps.py file_metadata tests",
+        # "cd file-metadata/ && python -m pytest --cov --pastebin=failed",
+        # "cd file-metadata/ && pprofile $(which py.test)",
+        "cd file-metadata/ && python -m cProfile -s time $(which py.test) > "
+          "profile.out && head profile.out -n 75",
+        "cd file-metadata/ && valgrind --tool=massif "
+          "--massif-out-file=massif.out --log-file=valgrind.log "
+          "python -m pytest || cat valgrind.log && ms_print massif.out | "
+          "head -n 50",
+    ]
+    run(ctx, job, yes=yes)
 
 
 # Installation of pywikibot
@@ -285,25 +306,20 @@ def test_script(ctx, yes=False, git=False):
         # "wikibot-filemeta-log -search:'eth-bib' -limit:5 -dry || true",
         "wikibot-filemeta-log -search:'eth-bib' -limit:5 -dry 2>&1 | "
           "tee out-log.tmp",                              # report error
-        "sudo pip install line_profiler memory_profiler pprofile",
+        "sudo pip install pprofile",
         "sudo apt-get {yes!s} install valgrind",
-        "python -m cProfile -s time /usr/local/bin/wikibot-filemeta-log "
-          "-search:'eth-bib' -limit:5 -dry > profile.out && "
-          "head profile.out -n 150",
-        "kernprof -l -v wikibot-filemeta-log "
-          "-search:'eth-bib' -limit:5 -dry && "
-          "python -m line_profiler wikibot-filemeta-log.lprof ",
-        # "pprofile wikibot-filemeta-log "
+        # "pprofile $(which wikibot-filemeta-log) "
         #   "-search:'eth-bib' -limit:5 -dry",
-        "pprofile $(which wikibot-filemeta-log) "
+        "pprofile --include log_bot.py $(which wikibot-filemeta-log) "
           "-limit:5 -dry",
-        "python -m memory_profiler wikibot-filemeta-log "
-          "-search:'eth-bib' -limit:5 -dry || true",      # ignore error
+        "python -m cProfile -s time $(which wikibot-filemeta-log) "
+          "-search:'eth-bib' -limit:5 -dry > profile.out && "
+          "head profile.out -n 50",
         "valgrind --tool=massif --massif-out-file=massif.out "
           "--log-file=valgrind.log wikibot-filemeta-log "
           "-search:'eth-bib' -limit:5 -dry || "           # ignore error
-          "cat valgrind.log && ms_print massif.out "
-          "|| true",                                      # ignore error
+          "cat valgrind.log && ms_print massif.out | "
+          "head -n 50 || true",                           # ignore error
         # "heaptrack python wikibot-filemeta-log "
         #   "-search:'eth-bib' -limit:5 -dry",
         # "wikibot-filemeta-simple -cat:SVG_files -limit:5",
