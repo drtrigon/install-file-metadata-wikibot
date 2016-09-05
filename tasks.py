@@ -225,8 +225,8 @@ def install_file_metadata_git(ctx, yes=False):
 @task
 def test_file_metadata_git(ctx, yes=False):
     job = [
-        "sudo pip install radon pprofile",
-        "sudo apt-get {yes!s} install valgrind",
+        "sudo pip install radon pprofile memory_profiler",
+        "sudo apt-get {yes!s} install valgrind gnuplot",
         # complexity (--mccabe) and time (--profile, --durations) analysis
         # by pytest are too simplistic and buggy currently
         "cd file-metadata/ && flake8 --verbose --show-source --statistics "
@@ -243,6 +243,9 @@ def test_file_metadata_git(ctx, yes=False):
           "--massif-out-file=massif.out --log-file=valgrind.log "
           "python -m pytest || cat valgrind.log && ms_print massif.out | "
           "head -n 50",
+        "/usr/bin/time -v $(which py.test) || true",
+        "mprof run $(which py.test) || gnuplot -e 'set terminal dumb; "
+          "plot \"`ls mprofile_*.dat`\" using 3:2 with lines;'",
     ]
     run(ctx, job, yes=yes)
 
@@ -306,8 +309,8 @@ def test_script(ctx, yes=False, git=False):
         # "wikibot-filemeta-log -search:'eth-bib' -limit:5 -dry || true",
         "wikibot-filemeta-log -search:'eth-bib' -limit:5 -dry 2>&1 | "
           "tee out-log.tmp",                              # report error
-        "sudo pip install pprofile",
-        "sudo apt-get {yes!s} install valgrind",
+        "sudo pip install pprofile memory_profiler",
+        "sudo apt-get {yes!s} install valgrind gnuplot",
         "pprofile --include log_bot.py -- $(which wikibot-filemeta-log) "
           "-search:'eth-bib' -limit:5 -dry",
         "python -m cProfile -s time $(which wikibot-filemeta-log) "
@@ -318,6 +321,11 @@ def test_script(ctx, yes=False, git=False):
           "-search:'eth-bib' -limit:5 -dry || "           # ignore error
           "cat valgrind.log && ms_print massif.out | "
           "head -n 50 || true",                           # ignore error
+        "/usr/bin/time -v $(which wikibot-filemeta-log) "
+          "-search:'eth-bib' -limit:5 -dry || true",
+        "mprof run $(which wikibot-filemeta-log) -search:'eth-bib' -limit:5 "
+          "-dry || gnuplot -e 'set terminal dumb; "
+          "plot \"`ls mprofile_*.dat`\" using 3:2 with lines;'",
         # "heaptrack python wikibot-filemeta-log "
         #   "-search:'eth-bib' -limit:5 -dry",
         # "wikibot-filemeta-simple -cat:SVG_files -limit:5",
