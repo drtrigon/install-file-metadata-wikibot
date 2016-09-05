@@ -244,8 +244,8 @@ def test_file_metadata_git(ctx, yes=False):
           "python -m pytest || cat valgrind.log && ms_print massif.out | "
           "head -n 50",
         "/usr/bin/time -v $(which py.test) || true",
-        "mprof run $(which py.test) || gnuplot -e 'set terminal dumb; "
-          "plot \"`ls mprofile_*.dat`\" using 3:2 with lines;'",
+        "mprof run $(which py.test) ; gnuplot -e 'set terminal dumb; "
+          "plot \"`ls -At mprof*.dat | head -n 1`\" using 3:2 with lines;'",
     ]
     run(ctx, job, yes=yes)
 
@@ -325,8 +325,8 @@ def test_script(ctx, yes=False, git=False):
         "/usr/bin/time -v $(which wikibot-filemeta-log) "
           "-search:'eth-bib' -limit:5 -dry || true",
         "mprof run $(which wikibot-filemeta-log) -search:'eth-bib' -limit:5 "
-          "-dry || gnuplot -e 'set terminal dumb; "
-          "plot \"`ls mprofile_*.dat`\" using 3:2 with lines;'",
+          "-dry ; gnuplot -e 'set terminal dumb; "
+          "plot \"`ls -At mprof*.dat | head -n 1`\" using 3:2 with lines;'",
         # "heaptrack python wikibot-filemeta-log "
         #   "-search:'eth-bib' -limit:5 -dry",
         # "wikibot-filemeta-simple -cat:SVG_files -limit:5",
